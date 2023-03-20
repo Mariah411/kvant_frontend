@@ -1,10 +1,13 @@
 import React, { FC } from "react";
-import { Route, Routes } from "react-router-dom";
-import { privateRoutes, publicRoutes } from "../router";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { $CombinedState } from "redux";
+import { useAppSelector } from "../hooks/hooks";
+import { privateRoutes, publicRoutes, RouteNames } from "../router";
+import { RootState } from "../store";
 
 const AppRouter: FC = () => {
-  const auth = false;
-  return auth ? (
+  const isAuth = useAppSelector((state) => state.auth.isAuth);
+  return isAuth ? (
     <>
       <Routes>
         {privateRoutes.map((route) => (
@@ -15,6 +18,7 @@ const AppRouter: FC = () => {
           />
         ))}
       </Routes>
+      <Navigate to={RouteNames.MAIN} replace={true} />
     </>
   ) : (
     <>
@@ -27,6 +31,7 @@ const AppRouter: FC = () => {
           />
         ))}
       </Routes>
+      <Navigate to={RouteNames.LOGIN} replace={true} />
     </>
   );
 };
