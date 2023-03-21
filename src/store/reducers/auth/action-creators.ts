@@ -42,15 +42,17 @@ export const AuthActionCreators = {
         email,
         password,
       });
-      console.log(jwt_decode(data.token));
+      //console.log(jwt_decode(data.token));
 
       localStorage.setItem("token", data.token);
+      localStorage.setItem("auth", "true");
 
       const user: IUser = jwt_decode(data.token);
 
       dispatch(AuthActionCreators.setUser(user));
       dispatch(AuthActionCreators.setAuth(true));
       dispatch(AuthActionCreators.setLoading(false));
+      dispatch(AuthActionCreators.setError(""));
     } catch (e: any) {
       const err = e as AxiosError<loginResponse>;
       if (typeof err.response?.data.message === "string") {
@@ -59,5 +61,12 @@ export const AuthActionCreators = {
       //dispatch(AuthActionCreators.setError(e.response.message));
       dispatch(AuthActionCreators.setLoading(false));
     }
+  },
+
+  logout: () => async (dispatch: AppDispatch) => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("auth");
+    dispatch(AuthActionCreators.setUser({} as IUser));
+    dispatch(AuthActionCreators.setAuth(false));
   },
 };

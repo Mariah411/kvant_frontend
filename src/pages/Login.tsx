@@ -2,11 +2,11 @@ import React, { FC, useState } from "react";
 import { Button, Checkbox, Form, Input, Layout, Typography } from "antd";
 import { useDispatch } from "react-redux";
 import { AuthActionCreators } from "../store/reducers/auth/action-creators";
-import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import { useActions, useAppDispatch, useAppSelector } from "../hooks/hooks";
 const { Text } = Typography;
 
 const Login: FC = () => {
-  const dispatch: any = useAppDispatch();
+  const { login } = useActions();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,7 +14,7 @@ const Login: FC = () => {
   const { isLoading, error } = useAppSelector((state) => state.auth);
 
   const onFinish = (values: any) => {
-    dispatch(AuthActionCreators.login(email, password));
+    login(email, password);
     // console.log("Success:", values);
   };
 

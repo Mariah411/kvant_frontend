@@ -1,14 +1,16 @@
 import Login from "../pages/Login";
 import MainPage from "../pages/MainPage";
+import StudentsPage from "../pages/StudentsPage";
 
 export interface IRoute {
   path: string;
-  component: React.ComponentType;
+  component?: React.ComponentType;
 }
 
 export enum RouteNames {
   LOGIN = "/login",
   MAIN = "/",
+  STUDENTS = "/students",
 }
 
 export const publicRoutes: IRoute[] = [
@@ -17,4 +19,5 @@ export const publicRoutes: IRoute[] = [
 
 export const privateRoutes: IRoute[] = [
   { path: RouteNames.MAIN, component: MainPage },
+  { path: RouteNames.STUDENTS, component: StudentsPage },
 ];

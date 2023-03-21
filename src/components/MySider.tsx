@@ -11,35 +11,44 @@ import {
   UploadOutlined,
   UserOutlined,
   VideoCameraOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-
-const items1: MenuProps["items"] = [
-  UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
-  BarChartOutlined,
-  CloudOutlined,
-  AppstoreOutlined,
-  TeamOutlined,
-  ShopOutlined,
-].map((icon, index) => ({
-  key: String(index + 1),
-  icon: React.createElement(icon),
-  label: `nav ${index + 1}`,
-}));
-
-const items: MenuProps["items"] = [
-  {
-    key: 1,
-    icon: React.createElement(UserOutlined),
-    label: "Петров петр Петрович",
-  },
-  { key: 2, icon: React.createElement(TeamOutlined), label: "Мои группы" },
-  { key: 3, icon: React.createElement(BarChartOutlined), label: "Отчеты" },
-];
+import { useActions, useAppSelector } from "../hooks/hooks";
+import { useNavigate } from "react-router-dom";
+import { RouteNames } from "../router";
 
 const MySider: FC = () => {
+  const { user } = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  const { logout } = useActions();
+
+  const items: MenuProps["items"] = [
+    {
+      key: 1,
+      icon: React.createElement(UserOutlined),
+      label: user.FIO,
+      onClick: () => navigate(RouteNames.MAIN),
+    },
+    { key: 2, icon: React.createElement(TeamOutlined), label: "Мои группы" },
+    {
+      key: 3,
+      icon: React.createElement(TeamOutlined),
+      label: "Все ученики",
+      onClick: () => navigate(RouteNames.STUDENTS),
+    },
+
+    { key: 4, icon: React.createElement(BarChartOutlined), label: "Отчеты" },
+    {
+      key: 5,
+      icon: React.createElement(LogoutOutlined),
+      label: "Выйти",
+      danger: true,
+      onClick: logout,
+    },
+  ];
+
   return (
     <Sider
       theme="light"
@@ -59,12 +68,7 @@ const MySider: FC = () => {
           background: "rgba(255, 255, 255, 0.2)",
         }}
       />
-      <Menu
-        theme="light"
-        mode="inline"
-        defaultSelectedKeys={["4"]}
-        items={items}
-      />
+      <Menu theme="light" mode="inline" items={items} />
     </Sider>
   );
 };

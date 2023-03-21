@@ -17,8 +17,12 @@ const AppRouter: FC = () => {
             key={route.path}
           />
         ))}
+        <Route
+          path="*"
+          element={<Navigate to={RouteNames.MAIN} replace={true} />}
+          key="*"
+        />
       </Routes>
-      <Navigate to={RouteNames.MAIN} replace={true} />
     </>
   ) : (
     <>
@@ -30,8 +34,12 @@ const AppRouter: FC = () => {
             key={route.path}
           />
         ))}
+        <Route
+          path="*"
+          element={<Navigate to={RouteNames.LOGIN} replace={true} />}
+          key="*"
+        />
       </Routes>
-      <Navigate to={RouteNames.LOGIN} replace={true} />
     </>
   );
 };
