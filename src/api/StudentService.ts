@@ -28,7 +28,15 @@ export class StudentService {
     }
   }
 
-  static async deleteStudent(id: number) {
+  static async deleteStudent(id: number | string) {
     return await axios.delete(`students/${id}`, ReqConfig());
+  }
+
+  static async getStudentById(id: number | string) {
+    return await axios.get(`/students/${id}`, ReqConfig());
+  }
+
+  static async updateStudent(id: number, data: IStudent) {
+    return await axios.put(`students/${id}`, data, ReqConfig());
   }
 }

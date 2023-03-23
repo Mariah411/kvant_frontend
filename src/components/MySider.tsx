@@ -39,9 +39,16 @@ const MySider: FC = () => {
       onClick: () => navigate(RouteNames.STUDENTS),
     },
 
-    { key: 4, icon: React.createElement(BarChartOutlined), label: "Отчеты" },
     {
-      key: 5,
+      key: 4,
+      icon: React.createElement(TeamOutlined),
+      label: "Все группы",
+      onClick: () => navigate(RouteNames.ALL_GROUPS),
+    },
+
+    { key: 5, icon: React.createElement(BarChartOutlined), label: "Отчеты" },
+    {
+      key: 6,
       icon: React.createElement(LogoutOutlined),
       label: "Выйти",
       danger: true,

@@ -1,29 +1,64 @@
 import React, { FC, useEffect, useState } from "react";
 import {
   Button,
+  DatePicker,
   Form,
   Input,
   InputNumber,
+  message,
   Popconfirm,
   Table,
   Typography,
 } from "antd";
-import { StudentsForTable } from "../models/IStudent";
+import { IStudentFields, StudentsForTable } from "../models/IStudent";
 import { Type } from "typescript";
+import moment from "moment";
+import { GroupForTable } from "../models/IGroup";
 
 type Props = {
   cols: any;
   tableData: any;
   deleteData: any;
   getData: any;
+  inputNodes: any;
+  setFields: any;
+  saveData: any;
+  isInfo?: boolean;
+  infoClick?: any;
 };
 
 const EditableTable = (props: Props) => {
-  const { cols, tableData, deleteData, getData } = props;
+  const {
+    cols,
+    tableData,
+    deleteData,
+    getData,
+    inputNodes,
+    setFields,
+    saveData,
+    isInfo,
+    infoClick,
+  } = props;
 
   const [isLoading, setIsLoading] = useState(false);
 
-  type Item = StudentsForTable;
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const success = () => {
+    messageApi.open({
+      type: "success",
+      content: "Успешно",
+    });
+  };
+
+  const error = () => {
+    messageApi.open({
+      type: "error",
+      content: "Произошла ошибка, проверьте введенные данные",
+    });
+  };
+
+  type Item = StudentsForTable | GroupForTable;
 
   interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
     editing: boolean;
@@ -45,7 +80,21 @@ const EditableTable = (props: Props) => {
     children,
     ...restProps
   }) => {
-    const inputNode = inputType === "number" ? <InputNumber /> : <Input />;
+    const inputNode = inputNodes[dataIndex];
+    // const getinputNode = (inputType: string) => {
+    //   switch (inputType) {
+    //     case "text":
+    //       return <Input />;
+    //     case "number":
+    //       return <InputNumber />;
+    //     case "calendar":
+    //       return <DatePicker />;
+    //     default:
+    //       return <Input />;
+    //   }
+    // };
+
+    // const inputNode = getinputNode(inputType);
 
     return (
       <td {...restProps}>
@@ -81,7 +130,7 @@ const EditableTable = (props: Props) => {
   const isEditing = (record: Item) => record.key === editingKey;
 
   const edit = (record: Partial<Item> & { key: React.Key }) => {
-    form.setFieldsValue({ ...record });
+    form.setFieldsValue(setFields(record));
     setEditingKey(record.key);
   };
 
@@ -94,26 +143,18 @@ const EditableTable = (props: Props) => {
   };
 
   const save = async (key: React.Key) => {
-    // try {
-    //   const row = (await form.validateFields()) as Item;
-    //   const newData = [...data];
-    //   const index = newData.findIndex((item) => key === item.key);
-    //   if (index > -1) {
-    //     const item = newData[index];
-    //     newData.splice(index, 1, {
-    //       ...item,
-    //       ...row,
-    //     });
-    //     setData(newData);
-    //     setEditingKey("");
-    //   } else {
-    //     newData.push(row);
-    //     setData(newData);
-    //     setEditingKey("");
-    //   }
-    // } catch (errInfo) {
-    //   console.log("Validate Failed:", errInfo);
-    // }
+    setIsLoading(true);
+
+    const isSaved = await saveData(key, form).then((res: any) => {
+      if (res) {
+        success();
+        getData().then(() => setIsLoading(false));
+        setEditingKey(-1);
+      } else {
+        error();
+        setIsLoading(false);
+      }
+    });
   };
 
   const columns = [
@@ -123,40 +164,65 @@ const EditableTable = (props: Props) => {
       dataIndex: "operation",
       render: (_: any, record: Item) => {
         const editable = isEditing(record);
-        return editable ? (
-          <span>
-            <Typography.Link
-              onClick={() => save(record.key)}
-              style={{ marginRight: 8 }}
-            >
-              Сохранить
-            </Typography.Link>
-            <Popconfirm title="Вы уверены?" onConfirm={cancel}>
-              <a>Отмена</a>
-            </Popconfirm>
-          </span>
-        ) : (
-          <span>
-            <Typography.Link
-              disabled={editingKey !== -1}
-              onClick={() => edit(record)}
-            >
-              Изменить
-            </Typography.Link>
+        return (
+          <>
+            {editable ? (
+              <span>
+                <Typography.Link
+                  onClick={() => save(record.key)}
+                  style={{ marginRight: 8 }}
+                >
+                  Сохранить
+                </Typography.Link>
+                <Popconfirm title="Вы уверены?" onConfirm={cancel}>
+                  <a>Отмена</a>
+                </Popconfirm>
+              </span>
+            ) : (
+              <span>
+                <Typography.Link
+                  disabled={editingKey !== -1}
+                  onClick={() => edit(record)}
+                >
+                  Изменить
+                </Typography.Link>
 
-            <Popconfirm
-              title="Вы уверены?"
-              onConfirm={() => deleteRow(record.key)}
-            >
-              <Button type="link" danger>
-                Удалить
-              </Button>
-            </Popconfirm>
-          </span>
+                <Popconfirm
+                  title="Вы уверены?"
+                  onConfirm={() => deleteRow(record.key)}
+                >
+                  <Button type="link" danger>
+                    Удалить
+                  </Button>
+                </Popconfirm>
+              </span>
+            )}{" "}
+            {isInfo && (
+              <Button onClick={() => infoClick(record.key)}>Подробнее</Button>
+            )}
+          </>
         );
       },
     },
   ];
+
+  // const colsType: string = {
+  //   FIO: typeFieldEnum.TEXT,
+  //   num_doc: typeFieldEnum.TEXT,
+  //   b_date: typeFieldEnum.CALENDAR,
+  //   year_study: typeFieldEnum.NUMBER,
+  //   note: typeFieldEnum.TEXT,
+  //   group_name: typeFieldEnum.TEXT,
+  // }
+
+  const colsType: IStudentFields = {
+    FIO: "text",
+    num_doc: "text",
+    b_date: "text",
+    year_study: "number",
+    note: "text",
+    group_name: "text",
+  };
 
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
@@ -166,7 +232,7 @@ const EditableTable = (props: Props) => {
       ...col,
       onCell: (record: Item) => ({
         record,
-        inputType: col.dataIndex === "age" ? "number" : "text",
+        inputType: colsType[col.dataIndex as keyof IStudentFields] || "text",
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
@@ -176,6 +242,7 @@ const EditableTable = (props: Props) => {
 
   return (
     <>
+      {contextHolder}
       <Form form={form} component={false}>
         <Table
           components={{
@@ -183,6 +250,7 @@ const EditableTable = (props: Props) => {
               cell: EditableCell,
             },
           }}
+          loading={isLoading}
           bordered
           dataSource={tableData}
           columns={mergedColumns}

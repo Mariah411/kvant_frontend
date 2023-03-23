@@ -5,3 +5,8 @@ export interface IUser {
   FIO: string;
   roles: any[];
 }
+
+export interface ITeacher {
+  id: number;
+  FIO: string;
+}

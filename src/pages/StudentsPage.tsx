@@ -3,6 +3,7 @@ import {
   DatePicker,
   Form,
   Input,
+  InputNumber,
   Layout,
   message,
   Modal,
@@ -15,17 +16,45 @@ import { Content, Header } from "antd/es/layout/layout";
 import Title from "antd/es/typography/Title";
 import React, { FC, useEffect, useState } from "react";
 import { StudentService } from "../api/StudentService";
-import ModalWithForm from "../components/ModalWihtForm";
 import MySider from "../components/MySider";
 import EditableTable from "../components/EditableTable";
-import { StudentsForTable, StudentsWithGroups } from "../models/IStudent";
+import {
+  IStudent,
+  StudentsForTable,
+  StudentsWithGroups,
+} from "../models/IStudent";
+import { FormInstance } from "antd/lib/form";
+import { IGroup } from "../models/IGroup";
+import { GroupsService } from "../api/GroupsService";
 
 const StudentsPage: FC = () => {
   const [dataSource, setDataSourse] = useState<StudentsForTable[]>([]);
+  const [groupOptions, setGroupsOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const [messageApi, contextHolder] = message.useMessage();
+
+  const getGroups = async () => {
+    const response = await GroupsService.getGroups();
+    // console.log(response.data);
+
+    const groupsOptions: { value: string; label: string }[] = response.data.map(
+      (gr) => ({
+        value: gr.id.toString(),
+        label: gr.name,
+      })
+    );
+
+    //console.log(groupsOptions);
+    setGroupsOptions(groupsOptions);
+  };
+
+  useEffect(() => {
+    getGroups();
+  }, []);
 
   const success = () => {
     messageApi.open({
@@ -107,20 +136,44 @@ const StudentsPage: FC = () => {
     },
   ];
 
-  const groupOptions = [
-    {
-      value: "1",
-      label: "ИТ01",
-    },
-    {
-      value: "2",
-      label: "ИТ02",
-    },
-    {
-      value: "3",
-      label: "БИО3",
-    },
-  ];
+  const inputNodes = {
+    FIO: <Input />,
+    num_doc: <Input />,
+    b_date: <Input />,
+    year_study: <InputNumber />,
+    note: <Input />,
+    group_name: (
+      <Select
+        showSearch
+        placeholder="Выберите группу"
+        options={groupOptions}
+        filterOption={(input, option) =>
+          (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+        }
+      />
+    ),
+  };
+
+  const setFields = (record: StudentsForTable) => {
+    //console.log(record.2015-03-04);
+    const id = groupOptions.findIndex((el) => el.label === record.group_name);
+    //console.log(id);
+    if (id != -1) {
+      return { ...record, group_name: groupOptions[id].value };
+    } else {
+      return { ...record, group_name: "" };
+    }
+  };
+
+  const saveData = async (key: any, form: FormInstance) => {
+    const row = await form.validateFields();
+    const new_row: IStudent = { ...row, id_group: row.group_name };
+    try {
+      return await StudentService.updateStudent(key, new_row);
+    } catch (e) {
+      return 0;
+    }
+  };
 
   const getData = async () => {
     const response = await StudentService.getStutentsWithGroup();
@@ -155,6 +208,9 @@ const StudentsPage: FC = () => {
                 tableData={dataSource}
                 deleteData={StudentService.deleteStudent}
                 getData={getData}
+                inputNodes={inputNodes}
+                setFields={setFields}
+                saveData={saveData}
               />
               {/* <Table
                 loading={isLoading}
