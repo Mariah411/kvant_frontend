@@ -1,6 +1,6 @@
 import { Menu } from "antd";
 import Sider from "antd/es/layout/Sider";
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 
 import {
   AppstoreOutlined,
@@ -12,11 +12,20 @@ import {
   UserOutlined,
   VideoCameraOutlined,
   LogoutOutlined,
+  CrownOutlined,
+  EditOutlined,
+  ExperimentOutlined,
+  SolutionOutlined,
+  BookOutlined,
+  FileDoneOutlined,
+  AppstoreAddOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { useActions, useAppSelector } from "../hooks/hooks";
 import { useNavigate } from "react-router-dom";
 import { RouteNames } from "../router";
+import { isAdmin, isEditor, isTeacher } from "../utils";
+import { group } from "console";
 
 const MySider: FC = () => {
   const { user } = useAppSelector((state) => state.auth);
@@ -24,37 +33,189 @@ const MySider: FC = () => {
 
   const { logout } = useActions();
 
-  const items: MenuProps["items"] = [
+  const adminItems = [
     {
-      key: 1,
+      label: "Панель администратора",
+      type: "group",
+      children: [
+        {
+          icon: React.createElement(SolutionOutlined),
+          label: "Ученики",
+          onClick: () => navigate(RouteNames.STUDENTS),
+          key: "students-a",
+        },
+        {
+          icon: React.createElement(TeamOutlined),
+          label: "Группы",
+          onClick: () => navigate(RouteNames.ALL_GROUPS),
+          key: "groups-a",
+        },
+
+        {
+          icon: React.createElement(UserOutlined),
+          label: "Работники",
+          onClick: () => navigate(RouteNames.MAIN),
+          key: "workers-a",
+        },
+
+        {
+          icon: React.createElement(BarChartOutlined),
+          label: "Отчеты",
+          onClick: () => navigate(RouteNames.MAIN),
+          key: "reports-a",
+        },
+        {
+          icon: React.createElement(AppstoreAddOutlined),
+          label: "Дополнительно",
+          onClick: () => navigate(RouteNames.MAIN),
+          key: "add-a",
+        },
+      ],
+    },
+  ];
+
+  const editorItems = [
+    {
+      label: "Методист / редактор",
+      type: "group",
+      children: [
+        {
+          icon: React.createElement(SolutionOutlined),
+          label: "Все ученики",
+          onClick: () => navigate(RouteNames.STUDENTS),
+          key: "students-e",
+        },
+        {
+          icon: React.createElement(TeamOutlined),
+          label: "Все группы",
+          onClick: () => navigate(RouteNames.ALL_GROUPS),
+          key: "groups-e",
+        },
+
+        {
+          icon: React.createElement(BarChartOutlined),
+          label: "Отчеты",
+          onClick: () => navigate(RouteNames.MAIN),
+          key: "reports-e",
+        },
+
+        {
+          icon: React.createElement(FileDoneOutlined),
+          label: "Все достижения",
+          onClick: () => navigate(RouteNames.MAIN),
+          key: "achivements-e",
+        },
+      ],
+      //onClick: () => navigate(RouteNames.MAIN),
+    },
+  ];
+
+  const teacherItems = [
+    {
+      label: "Педагог",
+      type: "group",
+      children: [
+        {
+          icon: React.createElement(BookOutlined),
+          label: "Мои группы",
+          onClick: () => navigate(RouteNames.MAIN),
+          key: "groups-t",
+        },
+        {
+          icon: React.createElement(CrownOutlined),
+          label: "Мои достижения",
+          onClick: () => navigate(RouteNames.MAIN),
+          key: "achivements-t",
+        },
+      ],
+      //onClick: () => navigate(RouteNames.MAIN),
+    },
+  ];
+
+  // const items: MenuProps["items"] = [
+
+  //   {
+  //     key: 1,
+  //     icon: React.createElement(UserOutlined),
+  //     label: user.FIO,
+  //     onClick: () => navigate(RouteNames.MAIN),
+  //   },
+  //   { key: 2, icon: React.createElement(TeamOutlined), label: "Мои группы" },
+  //   {
+  //     key: 3,
+  //     icon: React.createElement(TeamOutlined),
+  //     label: "Все ученики",
+  //     onClick: () => navigate(RouteNames.STUDENTS),
+  //   },
+
+  //   {
+  //     key: 4,
+  //     icon: React.createElement(TeamOutlined),
+  //     label: "Все группы",
+  //     onClick: () => navigate(RouteNames.ALL_GROUPS),
+  //   },
+
+  //   { key: 5, icon: React.createElement(BarChartOutlined), label: "Отчеты" },
+  //   {
+  //     key: 6,
+  //     icon: React.createElement(LogoutOutlined),
+  //     label: "Выйти",
+  //     danger: true,
+  //     onClick: logout,
+  //   },
+  // ];
+
+  const getArr = () => {
+    const arr = [];
+    if (isAdmin(user)) arr.push(...adminItems);
+    if (isEditor(user)) arr.push(...editorItems);
+    if (isTeacher(user)) arr.push(...teacherItems);
+    return arr;
+  };
+
+  let user_item = [
+    {
       icon: React.createElement(UserOutlined),
       label: user.FIO,
       onClick: () => navigate(RouteNames.MAIN),
     },
-    { key: 2, icon: React.createElement(TeamOutlined), label: "Мои группы" },
-    {
-      key: 3,
-      icon: React.createElement(TeamOutlined),
-      label: "Все ученики",
-      onClick: () => navigate(RouteNames.STUDENTS),
-    },
+  ];
 
+  let logout_item = [
     {
-      key: 4,
-      icon: React.createElement(TeamOutlined),
-      label: "Все группы",
-      onClick: () => navigate(RouteNames.ALL_GROUPS),
-    },
-
-    { key: 5, icon: React.createElement(BarChartOutlined), label: "Отчеты" },
-    {
-      key: 6,
       icon: React.createElement(LogoutOutlined),
       label: "Выйти",
       danger: true,
       onClick: logout,
     },
   ];
+
+  let items: MenuProps["items"] = [
+    ...user_item,
+    ...getArr(),
+    ...logout_item,
+  ].map((el, index) => ({ ...el, key: index + 1 }));
+
+  useEffect(() => {
+    // items = [
+    //   {
+    //     icon: React.createElement(UserOutlined),
+    //     label: user.FIO,
+    //     onClick: () => navigate(RouteNames.MAIN),
+    //   }
+    //   getArr(),
+    //   {
+    //     icon: React.createElement(LogoutOutlined),
+    //     label: "Выйти",
+    //     danger: true,
+    //     onClick: logout,
+    //   },
+    // ].map((el, index) => ({ ...el, key: index + 1 }));
+
+    console.log(items);
+
+    // console.log(getArr());
+  }, []);
 
   return (
     <Sider
