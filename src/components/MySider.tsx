@@ -54,7 +54,7 @@ const MySider: FC = () => {
         {
           icon: React.createElement(UserOutlined),
           label: "Работники",
-          onClick: () => navigate(RouteNames.MAIN),
+          onClick: () => navigate(RouteNames.WORKERS),
           key: "workers-a",
         },
 
@@ -67,7 +67,7 @@ const MySider: FC = () => {
         {
           icon: React.createElement(AppstoreAddOutlined),
           label: "Дополнительно",
-          onClick: () => navigate(RouteNames.MAIN),
+          onClick: () => navigate(RouteNames.ADDITIONAL),
           key: "add-a",
         },
       ],
@@ -128,42 +128,8 @@ const MySider: FC = () => {
           key: "achivements-t",
         },
       ],
-      //onClick: () => navigate(RouteNames.MAIN),
     },
   ];
-
-  // const items: MenuProps["items"] = [
-
-  //   {
-  //     key: 1,
-  //     icon: React.createElement(UserOutlined),
-  //     label: user.FIO,
-  //     onClick: () => navigate(RouteNames.MAIN),
-  //   },
-  //   { key: 2, icon: React.createElement(TeamOutlined), label: "Мои группы" },
-  //   {
-  //     key: 3,
-  //     icon: React.createElement(TeamOutlined),
-  //     label: "Все ученики",
-  //     onClick: () => navigate(RouteNames.STUDENTS),
-  //   },
-
-  //   {
-  //     key: 4,
-  //     icon: React.createElement(TeamOutlined),
-  //     label: "Все группы",
-  //     onClick: () => navigate(RouteNames.ALL_GROUPS),
-  //   },
-
-  //   { key: 5, icon: React.createElement(BarChartOutlined), label: "Отчеты" },
-  //   {
-  //     key: 6,
-  //     icon: React.createElement(LogoutOutlined),
-  //     label: "Выйти",
-  //     danger: true,
-  //     onClick: logout,
-  //   },
-  // ];
 
   const getArr = () => {
     const arr = [];
@@ -211,9 +177,7 @@ const MySider: FC = () => {
     //     onClick: logout,
     //   },
     // ].map((el, index) => ({ ...el, key: index + 1 }));
-
-    console.log(items);
-
+    // console.log(items);
     // console.log(getArr());
   }, []);
 

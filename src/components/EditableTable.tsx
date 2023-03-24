@@ -14,6 +14,8 @@ import { IStudentFields, StudentsForTable } from "../models/IStudent";
 import { Type } from "typescript";
 import moment from "moment";
 import { GroupForTable } from "../models/IGroup";
+import { KvantumForTable } from "../models/IKvamtum";
+import { RaitingForTable } from "../models/IRating";
 
 type Props = {
   cols: any;
@@ -58,7 +60,11 @@ const EditableTable = (props: Props) => {
     });
   };
 
-  type Item = StudentsForTable | GroupForTable;
+  type Item =
+    | StudentsForTable
+    | GroupForTable
+    | KvantumForTable
+    | RaitingForTable;
 
   interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
     editing: boolean;
@@ -81,20 +87,6 @@ const EditableTable = (props: Props) => {
     ...restProps
   }) => {
     const inputNode = inputNodes[dataIndex];
-    // const getinputNode = (inputType: string) => {
-    //   switch (inputType) {
-    //     case "text":
-    //       return <Input />;
-    //     case "number":
-    //       return <InputNumber />;
-    //     case "calendar":
-    //       return <DatePicker />;
-    //     default:
-    //       return <Input />;
-    //   }
-    // };
-
-    // const inputNode = getinputNode(inputType);
 
     return (
       <td {...restProps}>
@@ -206,24 +198,6 @@ const EditableTable = (props: Props) => {
     },
   ];
 
-  // const colsType: string = {
-  //   FIO: typeFieldEnum.TEXT,
-  //   num_doc: typeFieldEnum.TEXT,
-  //   b_date: typeFieldEnum.CALENDAR,
-  //   year_study: typeFieldEnum.NUMBER,
-  //   note: typeFieldEnum.TEXT,
-  //   group_name: typeFieldEnum.TEXT,
-  // }
-
-  const colsType: IStudentFields = {
-    FIO: "text",
-    num_doc: "text",
-    b_date: "text",
-    year_study: "number",
-    note: "text",
-    group_name: "text",
-  };
-
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
       return col;
@@ -232,7 +206,7 @@ const EditableTable = (props: Props) => {
       ...col,
       onCell: (record: Item) => ({
         record,
-        inputType: colsType[col.dataIndex as keyof IStudentFields] || "text",
+        inputType: "text",
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),

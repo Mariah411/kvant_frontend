@@ -1,3 +1,4 @@
+import { WorkersService } from "./../../../api/WorkersService";
 import { AppDispatch } from "./../../index";
 import {
   AuthActionsEnum,
@@ -62,6 +63,34 @@ export const AuthActionCreators = {
       dispatch(AuthActionCreators.setLoading(false));
     }
   },
+
+  registration:
+    (FIO: string, email: string, password: string) =>
+    async (dispatch: AppDispatch) => {
+      try {
+        dispatch(AuthActionCreators.setLoading(true));
+        const { data } = await WorkersService.registration(
+          FIO,
+          email,
+          password
+        );
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("auth", "true");
+
+        const user: IUser = jwt_decode(data.token);
+
+        dispatch(AuthActionCreators.setUser(user));
+        dispatch(AuthActionCreators.setAuth(true));
+        dispatch(AuthActionCreators.setLoading(false));
+        dispatch(AuthActionCreators.setError(""));
+      } catch (e: any) {
+        const err = e as AxiosError<loginResponse>;
+        if (typeof err.response?.data.message === "string") {
+          dispatch(AuthActionCreators.setError(err.response?.data.message));
+        }
+        dispatch(AuthActionCreators.setLoading(false));
+      }
+    },
 
   logout: () => async (dispatch: AppDispatch) => {
     localStorage.removeItem("token");

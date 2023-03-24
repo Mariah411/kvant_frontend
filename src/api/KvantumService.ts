@@ -8,4 +8,26 @@ export class KvantumsService {
     // console.log(response.data);
     return response;
   }
+
+  static async createKvantum(kvantum: Ikvantum) {
+    try {
+      const response = await axios.post<Ikvantum>(
+        "kvantums/",
+        kvantum,
+        ReqConfig()
+      );
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static async deleteKvantum(id: number | string) {
+    return await axios.delete(`kvantums/${id}`, ReqConfig());
+  }
+
+  static async updateKvantum(id: number, data: Ikvantum) {
+    return await axios.put(`kvantums/${id}`, data, ReqConfig());
+  }
 }

@@ -3,3 +3,5 @@ export interface IRating {
   points: number;
   description: string;
 }
+
+export type RaitingForTable = IRating & { key: number };
