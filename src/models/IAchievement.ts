@@ -10,8 +10,9 @@ export interface IAchievement {
   place: number;
   id_rating: number;
   rating: IRating;
-  workers?: IUser[];
-  students?: IStudent[];
+  workers: IUser[];
+  students: IStudent[];
+  image: any;
 }
 
 export interface IAchievementForTable {
@@ -20,8 +21,21 @@ export interface IAchievementForTable {
   date: Date;
   diplom: string;
   place: number;
-  id_rating: number;
-  rating?: string;
-  workers?: string;
-  students?: string;
+  id_rating: string;
+  workers: string;
+  students: string;
+  image: any;
 }
+
+export type AchievementForCreate = {
+  id: number;
+  name: string;
+  date: Date;
+  diplom: string;
+  place: number;
+  id_rating: number;
+  rating: string;
+  workers: string[] | number[];
+  students: string[] | number[];
+  image: any;
+};

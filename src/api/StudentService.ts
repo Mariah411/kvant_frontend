@@ -7,7 +7,7 @@ export class StudentService {
     AxiosResponse<StudentsWithGroups[]>
   > {
     const response = await axios.get<StudentsWithGroups[]>(
-      "editor/students/",
+      "/editor/students/",
       ReqConfig()
     );
     //console.log(response.data);

@@ -102,7 +102,7 @@ const MySider: FC = () => {
         {
           icon: React.createElement(FileDoneOutlined),
           label: "Все достижения",
-          onClick: () => navigate(RouteNames.MAIN),
+          onClick: () => navigate(RouteNames.ALL_ACHIEVEMENTS),
           key: "achivements-e",
         },
       ],
@@ -118,13 +118,13 @@ const MySider: FC = () => {
         {
           icon: React.createElement(BookOutlined),
           label: "Мои группы",
-          onClick: () => navigate(RouteNames.MAIN),
+          onClick: () => navigate(RouteNames.MY_GROUPS),
           key: "groups-t",
         },
         {
           icon: React.createElement(CrownOutlined),
           label: "Мои достижения",
-          onClick: () => navigate(RouteNames.MAIN),
+          onClick: () => navigate(RouteNames.ALL_ACHIEVEMENTS),
           key: "achivements-t",
         },
       ],

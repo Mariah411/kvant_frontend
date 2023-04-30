@@ -14,7 +14,7 @@ export class WorkersService {
   }
 
   static async getWorkers(): Promise<AxiosResponse<IUser[]>> {
-    const response = await axios.get<IUser[]>("workers/", ReqConfig());
+    const response = await axios.get<IUser[]>("/workers/", ReqConfig());
     return response;
   }
 

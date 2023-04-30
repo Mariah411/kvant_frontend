@@ -11,7 +11,13 @@ const MainPage: FC = () => {
     <Layout hasSider>
       <MySider />
       <Layout className="site-layout" style={{ marginLeft: 200 }}>
-        <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>
+        <Content
+          style={{
+            margin: "24px 16px 0",
+            overflow: "initial",
+            minHeight: "95vh",
+          }}
+        >
           <div
             style={{
               padding: 24,

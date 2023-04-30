@@ -1,4 +1,5 @@
 import { IGroup } from "./IGroup";
+import { IVisit } from "./IVisit";
 export interface IStudent {
   id: number;
   FIO: string;
@@ -21,3 +22,5 @@ export interface IStudentFields {
   note: string;
   group_name: string;
 }
+
+export type StudentWithVisits = IStudent & { visits: IVisit[] };

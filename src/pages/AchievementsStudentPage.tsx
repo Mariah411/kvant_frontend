@@ -1,4 +1,4 @@
-import { Card, Layout, Table } from "antd";
+import { Card, Layout, Table, Image } from "antd";
 import { Content } from "antd/es/layout/layout";
 import React, { FC, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -27,7 +27,7 @@ const AchievementsStudentPage: FC = () => {
             ...el,
             students: el.students?.map((s) => s.FIO).toString(),
             workers: el.workers?.map((w) => w.FIO).toString(),
-            rating: el.rating?.description,
+            id_rating: el.rating?.description,
             key: el.id,
           };
           return new_el;
@@ -68,7 +68,10 @@ const AchievementsStudentPage: FC = () => {
       dataIndex: "diplom",
       key: "diplom",
       width: "10%",
-      editable: true,
+      editable: false,
+      render: (_: any, record: IAchievementForTable) => {
+        return <Image width={50} src={`/${record.diplom}`} />;
+      },
     },
     {
       title: "Место",
@@ -79,8 +82,8 @@ const AchievementsStudentPage: FC = () => {
     },
     {
       title: "Уровень",
-      dataIndex: "rating",
-      key: "rating",
+      dataIndex: "id_rating",
+      key: "id_rating",
       width: "10%",
       editable: true,
     },
@@ -104,7 +107,13 @@ const AchievementsStudentPage: FC = () => {
     <Layout hasSider>
       <MySider />
       <Layout className="site-layout" style={{ marginLeft: 200 }}>
-        <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>
+        <Content
+          style={{
+            margin: "24px 16px 0",
+            overflow: "initial",
+            minHeight: "95vh",
+          }}
+        >
           <Card title={`${student.FIO}  /  Достижения`}>
             <Table
               dataSource={achievements}

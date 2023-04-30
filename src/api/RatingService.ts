@@ -4,7 +4,7 @@ import { IRating } from "../models/IRating";
 
 export class RatingService {
   static async getRatings(): Promise<AxiosResponse<IRating[]>> {
-    const response = await axios.get<IRating[]>("ratings/", ReqConfig());
+    const response = await axios.get<IRating[]>("/ratings/", ReqConfig());
 
     // console.log(response.data);
     return response;

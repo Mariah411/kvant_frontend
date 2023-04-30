@@ -1,10 +1,13 @@
 import AchievementsStudentPage from "../pages/AchievementsStudentPage";
 import AdditionalAdminPage from "../pages/AdditionalAdminPage";
+import AllAchivementsPage from "../pages/AllAchivementsPage";
 import AllGroupsPage from "../pages/AllGroupsPage";
 import GroupInfoPage from "../pages/GroupInfoPage";
 import Login from "../pages/Login";
 import MainPage from "../pages/MainPage";
 import StudentsPage from "../pages/StudentsPage";
+import TeacherGroupsPage from "../pages/TeacherGroupsPage";
+import VisitsPage from "../pages/VisitsPage";
 
 import WorkersPage from "../pages/WorkersPage";
 
@@ -22,6 +25,9 @@ export enum RouteNames {
   ACHIEVEMENT_STUDENT = "/ahievements/student/:id",
   ADDITIONAL = "/additional",
   WORKERS = "/workers",
+  ALL_ACHIEVEMENTS = "/achievements/all",
+  MY_GROUPS = "/my_groups",
+  VISITS = "/group/:id/visits",
 }
 
 export const publicRoutes: IRoute[] = [
@@ -36,4 +42,7 @@ export const privateRoutes: IRoute[] = [
   { path: RouteNames.ACHIEVEMENT_STUDENT, component: AchievementsStudentPage },
   { path: RouteNames.ADDITIONAL, component: AdditionalAdminPage },
   { path: RouteNames.WORKERS, component: WorkersPage },
+  { path: RouteNames.ALL_ACHIEVEMENTS, component: AllAchivementsPage },
+  { path: RouteNames.MY_GROUPS, component: TeacherGroupsPage },
+  { path: RouteNames.VISITS, component: VisitsPage },
 ];
