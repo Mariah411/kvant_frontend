@@ -289,10 +289,7 @@ const VisitsPage: FC = () => {
               minHeight: "95vh",
             }}
           >
-            <Card
-              title="Посещаемость"
-              extra={<Button type="primary">Добавить ученика</Button>}
-            >
+            <Card title="Посещаемость">
               <RangePicker
                 defaultValue={Interval1}
                 value={Interval1}

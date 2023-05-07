@@ -95,7 +95,7 @@ const MySider: FC = () => {
         {
           icon: React.createElement(BarChartOutlined),
           label: "Отчеты",
-          onClick: () => navigate(RouteNames.MAIN),
+          onClick: () => navigate(RouteNames.REPORTS),
           key: "reports-e",
         },
 

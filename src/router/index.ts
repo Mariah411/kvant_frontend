@@ -5,6 +5,7 @@ import AllGroupsPage from "../pages/AllGroupsPage";
 import GroupInfoPage from "../pages/GroupInfoPage";
 import Login from "../pages/Login";
 import MainPage from "../pages/MainPage";
+import ReportPage from "../pages/ReportPage";
 import StudentsPage from "../pages/StudentsPage";
 import TeacherGroupsPage from "../pages/TeacherGroupsPage";
 import VisitsPage from "../pages/VisitsPage";
@@ -28,6 +29,7 @@ export enum RouteNames {
   ALL_ACHIEVEMENTS = "/achievements/all",
   MY_GROUPS = "/my_groups",
   VISITS = "/group/:id/visits",
+  REPORTS = "/reports",
 }
 
 export const publicRoutes: IRoute[] = [
@@ -45,4 +47,5 @@ export const privateRoutes: IRoute[] = [
   { path: RouteNames.ALL_ACHIEVEMENTS, component: AllAchivementsPage },
   { path: RouteNames.MY_GROUPS, component: TeacherGroupsPage },
   { path: RouteNames.VISITS, component: VisitsPage },
+  { path: RouteNames.REPORTS, component: ReportPage },
 ];
