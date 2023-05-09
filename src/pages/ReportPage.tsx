@@ -1,6 +1,6 @@
-import { Card, Layout } from "antd";
+import { Card, Layout, Table, Tabs } from "antd";
 import { Content } from "antd/es/layout/layout";
-import React, { FC, useEffect, useState } from "react";
+import React, { Children, FC, useEffect, useState } from "react";
 import MySider from "../components/MySider";
 
 import {
@@ -14,6 +14,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { ReportService } from "../api/ReportService";
+import { Ikvantum } from "../models/IKvamtum";
 
 ChartJS.register(
   CategoryScale,
@@ -28,25 +29,98 @@ const ReportPage: FC = () => {
   const [labels, setlabels] = useState([] as string[]);
   const [dataSet, setDataSet] = useState([] as any[]);
 
-  const getData = async () => {
-    const { data }: any = await ReportService.getGroupsAttendance(
-      "2022-05-07",
-      "2023-05-07"
-    );
+  const [tableData, setData] = useState([] as any[]);
 
-    const labels = data.map((el: { name: any }) => el.name);
+  const [selectedTab, setSelectedTab] = useState("0");
+
+  const cols = [
+    [
+      {
+        title: "Группа",
+        dataIndex: "name",
+        key: "name",
+      },
+      {
+        title: "Процент посещаемости, %",
+        dataIndex: "attendance",
+        key: "attendance",
+      },
+    ],
+    [
+      {
+        title: "ФИО педагога",
+        dataIndex: "FIO",
+        key: "FIO",
+      },
+      {
+        title: "Процент посещаемости, %",
+        dataIndex: "attendance",
+        key: "attendance",
+      },
+    ],
+    [
+      {
+        title: "Квантум",
+        dataIndex: "name",
+        key: "name",
+      },
+      {
+        title: "Процент посещаемости, %",
+        dataIndex: "attendance",
+        key: "attendance",
+      },
+    ],
+  ];
+
+  const getDataForTabs = async (key: string) => {
+    switch (key) {
+      case "0":
+        return await ReportService.getGroupsAttendance(
+          "2022-05-07",
+          "2023-05-07"
+        );
+
+      case "1":
+        return await ReportService.getTeachersAttendance(
+          "2022-05-07",
+          "2023-05-07"
+        );
+      case "2":
+        return await ReportService.getKvantumsAttendance(
+          "2022-05-07",
+          "2023-05-07"
+        );
+    }
+  };
+
+  const getData = async () => {
+    const { data }: any = await getDataForTabs(selectedTab);
+
+    const labels = data.map((el: any) =>
+      selectedTab === "1" ? el.FIO : el.name
+    );
     setlabels(labels);
+
+    setData(data.map((el: { id: any }) => ({ ...el, key: el.id })));
 
     const dataset = data.map((el: { attendance: any }) => el.attendance);
     setDataSet(dataset);
   };
-  //const labels = ["January", "February", "March", "April", "May", "June"];
 
   useEffect(() => {
     getData();
   }, []);
 
+  useEffect(() => {
+    getData();
+  }, [selectedTab]);
+
+  const onTabChange = (key: string) => {
+    setSelectedTab(key);
+  };
+
   const options = {
+    indexAxis: "y" as const,
     responsive: true,
     plugins: {
       legend: {
@@ -54,7 +128,7 @@ const ReportPage: FC = () => {
       },
       title: {
         display: true,
-        text: "Chart.js Bar Chart",
+        text: "Посещаемость",
       },
     },
   };
@@ -63,12 +137,35 @@ const ReportPage: FC = () => {
     labels,
     datasets: [
       {
-        label: "Dataset 1",
+        label: "%",
         data: dataSet,
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
     ],
   };
+
+  const items = [
+    {
+      label: "Группы",
+      key: "0",
+    },
+    {
+      label: "Педагоги",
+      key: "1",
+    },
+    {
+      label: "Квантумы",
+      key: "2",
+    },
+  ].map((el) => ({
+    ...el,
+    children: (
+      <>
+        <Bar options={options} data={data} />
+        <Table dataSource={tableData} columns={cols[+el.key]} />
+      </>
+    ),
+  }));
 
   return (
     <Layout hasSider>
@@ -82,7 +179,11 @@ const ReportPage: FC = () => {
           }}
         >
           <Card title="Посещаемость">
-            <Bar options={options} data={data} />;
+            <Tabs
+              defaultActiveKey={selectedTab}
+              items={items}
+              onChange={onTabChange}
+            />
           </Card>
         </Content>
       </Layout>
