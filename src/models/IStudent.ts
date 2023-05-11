@@ -24,3 +24,10 @@ export interface IStudentFields {
 }
 
 export type StudentWithVisits = IStudent & { visits: IVisit[] };
+
+export type StudentWithRating = IStudent & {
+  attendance: any;
+  achievements: any;
+  attestation: any;
+  total_points: any;
+};

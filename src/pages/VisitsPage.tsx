@@ -40,6 +40,8 @@ const VisitsPage: FC = () => {
   const location = useLocation();
   const group_id = location.pathname.split("/")[2];
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const [cols1, setCols1] = useState([] as any[]);
   const [rows1, setRows1] = useState([] as any[]);
   const [cols2, setCols2] = useState([] as any[]);
@@ -150,6 +152,7 @@ const VisitsPage: FC = () => {
     visit_date: Date,
     id_type: number
   ) => {
+    setIsLoading(true);
     console.log(visit_date);
 
     const deleteVisit = async () => {
@@ -164,10 +167,12 @@ const VisitsPage: FC = () => {
       }
     };
 
-    await deleteVisit().then(() => {
-      if (id_type === 1) getVisitsData();
-      else getAttestationData();
-    });
+    await deleteVisit()
+      .then(() => {
+        if (id_type === 1) getVisitsData();
+        else getAttestationData();
+      })
+      .then(() => setIsLoading(false));
   };
 
   const updateVisits = async (
@@ -177,6 +182,7 @@ const VisitsPage: FC = () => {
     visit_date: Date,
     points?: number
   ) => {
+    setIsLoading(true);
     // console.log(id_student, id_type, is_visited, visit_date, points);
     const response = await VisitsService.updateVisit({
       id_student,
@@ -184,12 +190,14 @@ const VisitsPage: FC = () => {
       is_visited,
       visit_date,
       points,
-    }).then((isSuccess) => {
-      if (isSuccess) {
-        success();
-        id_type === 1 ? getVisitsData() : getAttestationData();
-      } else error();
-    });
+    })
+      .then((isSuccess) => {
+        if (isSuccess) {
+          success();
+          id_type === 1 ? getVisitsData() : getAttestationData();
+        } else error();
+      })
+      .then(() => setIsLoading(false));
   };
 
   const getAttestationData = async () => {
@@ -238,6 +246,7 @@ const VisitsPage: FC = () => {
     console.log(type);
 
     const create = async () => {
+      setIsLoading(true);
       try {
         let isSuccess = true;
         for (let student of rows1) {
@@ -261,18 +270,22 @@ const VisitsPage: FC = () => {
       }
     };
 
-    await create().then(() => {
-      if (type === 1) getVisitsData();
-      else getAttestationData();
-    });
+    await create()
+      .then(() => {
+        if (type === 1) getVisitsData();
+        else getAttestationData();
+      })
+      .then(() => setIsLoading(false));
   };
 
   useEffect(() => {
-    getVisitsData();
+    setIsLoading(true);
+    getVisitsData().then(() => setIsLoading(false));
   }, [Interval1]);
 
   useEffect(() => {
-    getAttestationData();
+    setIsLoading(true);
+    getAttestationData().then(() => setIsLoading(false));
   }, [Interval2]);
 
   return (
@@ -316,7 +329,7 @@ const VisitsPage: FC = () => {
 
               <Table
                 scroll={{ x: 1500 }}
-                // loading={isLoading}
+                loading={isLoading}
                 dataSource={rows1}
                 columns={cols1}
               />
@@ -346,11 +359,7 @@ const VisitsPage: FC = () => {
                   <Form.Item name="type" />
                 </Space>
               </Form>
-              <Table
-                // loading={isLoading}
-                dataSource={rows2}
-                columns={cols2}
-              />
+              <Table loading={isLoading} dataSource={rows2} columns={cols2} />
             </Card>
           </Content>
         </Layout>

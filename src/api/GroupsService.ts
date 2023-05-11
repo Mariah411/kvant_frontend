@@ -5,7 +5,7 @@ import {
   GroupsWithKvantumsAndTeachers,
   IGroup,
 } from "./../models/IGroup";
-import { StudentWithVisits } from "../models/IStudent";
+import { StudentWithRating, StudentWithVisits } from "../models/IStudent";
 
 export class GroupsService {
   static async getGroups(): Promise<AxiosResponse<IGroup[]>> {
@@ -80,6 +80,18 @@ export class GroupsService {
   ): Promise<AxiosResponse<StudentWithVisits[]>> {
     return await axios.post<StudentWithVisits[]>(
       `/groups/${id}/attestation`,
+      { start_date, end_date },
+      ReqConfig()
+    );
+  }
+
+  static async getGroupRating(
+    id: number | string,
+    start_date: Date | string,
+    end_date: Date | string
+  ): Promise<AxiosResponse<StudentWithRating[]>> {
+    return await axios.post<StudentWithRating[]>(
+      `/reports/raiting/group/${id}`,
       { start_date, end_date },
       ReqConfig()
     );
