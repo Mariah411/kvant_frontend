@@ -31,7 +31,7 @@ type Props = {
   selectedKey?: string;
 };
 
-const MySider: FC<Props> = (props: Props) => {
+const MenuDrawer: FC<Props> = (props: Props) => {
   const { user } = useAppSelector((state) => state.auth);
   const location = useLocation();
   const navigate = useNavigate();
@@ -170,17 +170,7 @@ const MySider: FC<Props> = (props: Props) => {
   useEffect(() => {}, []);
 
   return (
-    <Sider
-      theme="light"
-      style={{
-        overflow: "auto",
-        height: "100vh",
-        position: "fixed",
-        left: 0,
-        top: 0,
-        bottom: 0,
-      }}
-    >
+    <>
       <div
         style={{
           height: 32,
@@ -195,8 +185,8 @@ const MySider: FC<Props> = (props: Props) => {
         items={items}
         selectedKeys={[location.pathname]}
       />
-    </Sider>
+    </>
   );
 };
 
-export default MySider;
+export default MenuDrawer;

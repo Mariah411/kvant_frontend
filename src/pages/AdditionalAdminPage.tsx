@@ -4,7 +4,8 @@ import React, { FC } from "react";
 import KvantumsCard from "../components/AdminPanel/KvantumsCard";
 import RaitingCard from "../components/AdminPanel/RaitingCard";
 import EditableTable from "../components/EditableTable";
-import MySider from "../components/MySider";
+import MySider from "../components/MenuDrawer";
+import ContainerWithSider from "../components/ContainerWithSider";
 
 const AdditionalAdminPage: FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -24,21 +25,10 @@ const AdditionalAdminPage: FC = () => {
   return (
     <>
       {contextHolder}
-      <Layout hasSider>
-        <MySider />
-        <Layout className="site-layout" style={{ marginLeft: 200 }}>
-          <Content
-            style={{
-              margin: "24px 16px 0",
-              overflow: "initial",
-              minHeight: "95vh",
-            }}
-          >
-            <KvantumsCard success={success} error={error} />
-            <RaitingCard success={success} error={error} />
-          </Content>
-        </Layout>
-      </Layout>
+      <ContainerWithSider>
+        <KvantumsCard success={success} error={error} />
+        <RaitingCard success={success} error={error} />
+      </ContainerWithSider>
     </>
   );
 };

@@ -16,8 +16,9 @@ import React, { FC, useEffect, useState } from "react";
 import { RolesService } from "../api/RolesService";
 import { WorkersService } from "../api/WorkersService";
 import EditableTable from "../components/EditableTable";
-import MySider from "../components/MySider";
+import MySider from "../components/MenuDrawer";
 import { UserForTable } from "../models/IUser";
+import ContainerWithSider from "../components/ContainerWithSider";
 
 const WorkersPage: FC = () => {
   const [dataSource, setDataSourse] = useState<UserForTable[]>([]);
@@ -159,99 +160,88 @@ const WorkersPage: FC = () => {
   return (
     <>
       {contextHolder}
-      <Layout hasSider>
-        <MySider />
-        <Layout className="site-layout" style={{ marginLeft: 200 }}>
-          <Content
-            style={{
-              margin: "24px 16px 0",
-              overflow: "initial",
-              minHeight: "95vh",
-            }}
-          >
-            <Card
-              title="Список групп"
-              extra={
-                <Button type="primary" onClick={showModal}>
-                  Добавить работника
-                </Button>
-              }
+      <ContainerWithSider>
+        <Card
+          title="Список групп"
+          extra={
+            <Button type="primary" onClick={showModal}>
+              Добавить работника
+            </Button>
+          }
+        >
+          <EditableTable
+            cols={columns}
+            tableData={dataSource}
+            deleteData={WorkersService.deleteWorker}
+            getData={getData}
+            inputNodes={inputNodes}
+            setFields={setFields}
+            saveData={saveData}
+          />
+        </Card>
+
+        <Modal
+          title="Новый работник"
+          open={isModalVisible}
+          footer={null}
+          onCancel={onCancelCreate}
+        >
+          <Form form={form} onFinish={onCreate}>
+            <Form.Item
+              label="ФИО"
+              name="FIO"
+              rules={[{ required: true, message: "Заполните поле" }]}
             >
-              <EditableTable
-                cols={columns}
-                tableData={dataSource}
-                deleteData={WorkersService.deleteWorker}
-                getData={getData}
-                inputNodes={inputNodes}
-                setFields={setFields}
-                saveData={saveData}
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Электронная почта"
+              name="email"
+              rules={[{ required: true, message: "Заполните поле" }]}
+            >
+              <Input type="mail" />
+            </Form.Item>
+
+            <Form.Item
+              label="Пароль"
+              name="password"
+              rules={[{ required: true, message: "Заполните поле" }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Роли"
+              name="roles"
+              rules={[{ required: true, message: "Заполните поле" }]}
+            >
+              <Select
+                mode="multiple"
+                placeholder="Выберите роли"
+                options={rolesOptions}
               />
-            </Card>
+            </Form.Item>
+            <Space>
+              <Form.Item>
+                <Button htmlType="submit" type="primary">
+                  Добавить
+                </Button>
+              </Form.Item>
 
-            <Modal
-              title="Новый работник"
-              open={isModalVisible}
-              footer={null}
-              onCancel={onCancelCreate}
-            >
-              <Form form={form} onFinish={onCreate}>
-                <Form.Item
-                  label="ФИО"
-                  name="FIO"
-                  rules={[{ required: true, message: "Заполните поле" }]}
-                >
-                  <Input />
-                </Form.Item>
+              <Form.Item>
+                <Button danger onClick={onCreateReset}>
+                  Очистить
+                </Button>
+              </Form.Item>
 
-                <Form.Item
-                  label="Электронная почта"
-                  name="email"
-                  rules={[{ required: true, message: "Заполните поле" }]}
-                >
-                  <Input type="mail" />
-                </Form.Item>
-
-                <Form.Item
-                  label="Пароль"
-                  name="password"
-                  rules={[{ required: true, message: "Заполните поле" }]}
-                >
-                  <Input />
-                </Form.Item>
-
-                <Form.Item
-                  label="Роли"
-                  name="roles"
-                  rules={[{ required: true, message: "Заполните поле" }]}
-                >
-                  <Select
-                    mode="multiple"
-                    placeholder="Выберите роли"
-                    options={rolesOptions}
-                  />
-                </Form.Item>
-                <Space>
-                  <Form.Item>
-                    <Button htmlType="submit" type="primary">
-                      Добавить
-                    </Button>
-                  </Form.Item>
-
-                  <Form.Item>
-                    <Button danger onClick={onCreateReset}>
-                      Очистить
-                    </Button>
-                  </Form.Item>
-
-                  <Form.Item>
-                    <Button onClick={onCancelCreate}>Отмена</Button>
-                  </Form.Item>
-                </Space>
-              </Form>
-            </Modal>
-          </Content>
-        </Layout>
-      </Layout>
+              <Form.Item>
+                <Button onClick={onCancelCreate}>Отмена</Button>
+              </Form.Item>
+            </Space>
+          </Form>
+        </Modal>
+      </ContainerWithSider>
     </>
   );
 };

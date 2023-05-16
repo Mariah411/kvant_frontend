@@ -14,7 +14,7 @@ import {
   message,
 } from "antd";
 import React, { FC, useContext, useEffect, useRef, useState } from "react";
-import MySider from "../components/MySider";
+import MySider from "../components/MenuDrawer";
 import { Content } from "antd/es/layout/layout";
 import EditableTable from "../components/EditableTable";
 import { GroupsService } from "../api/GroupsService";

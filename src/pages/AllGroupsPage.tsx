@@ -17,11 +17,12 @@ import { GroupsService } from "../api/GroupsService";
 import { KvantumsService } from "../api/KvantumService";
 import { WorkersService } from "../api/WorkersService";
 import EditableTable from "../components/EditableTable";
-import MySider from "../components/MySider";
+import MySider from "../components/MenuDrawer";
 import { GroupForTable } from "../models/IGroup";
 import { RouteNames } from "../router";
 import { IStudent } from "../models/IStudent";
 import { StudentService } from "../api/StudentService";
+import ContainerWithSider from "../components/ContainerWithSider";
 
 const AllGroupsPage: FC = () => {
   const [dataSource, setDataSourse] = useState<GroupForTable[]>([]);
@@ -226,120 +227,109 @@ const AllGroupsPage: FC = () => {
   return (
     <>
       {contextHolder}
-      <Layout hasSider>
-        <MySider selectedKey="groups-e" />
-        <Layout className="site-layout" style={{ marginLeft: 200 }}>
-          <Content
-            style={{
-              margin: "24px 16px 0",
-              overflow: "initial",
-              minHeight: "95vh",
-            }}
-          >
-            <Card
-              title="Список групп"
-              extra={
-                <Button type="primary" onClick={showModal}>
-                  Добавить группу
-                </Button>
-              }
+      <ContainerWithSider>
+        <Card
+          title="Список групп"
+          extra={
+            <Button type="primary" onClick={showModal}>
+              Добавить группу
+            </Button>
+          }
+        >
+          <EditableTable
+            cols={columns}
+            tableData={dataSource}
+            deleteData={GroupsService.deleteGroup}
+            getData={getData}
+            inputNodes={inputNodes}
+            setFields={setFields}
+            saveData={saveData}
+            isInfo={true}
+            infoClick={infoClick}
+          />
+        </Card>
+
+        <Modal
+          title="Новая группа"
+          open={isModalVisible}
+          footer={null}
+          onCancel={onCancelCreate}
+        >
+          <Form form={form} onFinish={onCreate}>
+            <Form.Item
+              label="Название"
+              name="name"
+              rules={[{ required: true, message: "Заполните поле" }]}
             >
-              <EditableTable
-                cols={columns}
-                tableData={dataSource}
-                deleteData={GroupsService.deleteGroup}
-                getData={getData}
-                inputNodes={inputNodes}
-                setFields={setFields}
-                saveData={saveData}
-                isInfo={true}
-                infoClick={infoClick}
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Возраст"
+              name="age"
+              rules={[{ required: true, message: "Заполните поле" }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Расписание"
+              name="shedule"
+              rules={[{ required: true, message: "Заполните поле" }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Квантум"
+              name="id_kvantum"
+              rules={[{ required: true, message: "Заполните поле" }]}
+            >
+              <Select
+                showSearch
+                placeholder="Выберите квантум"
+                options={kvantumOptions}
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
               />
-            </Card>
+            </Form.Item>
 
-            <Modal
-              title="Новая группа"
-              open={isModalVisible}
-              footer={null}
-              onCancel={onCancelCreate}
-            >
-              <Form form={form} onFinish={onCreate}>
-                <Form.Item
-                  label="Название"
-                  name="name"
-                  rules={[{ required: true, message: "Заполните поле" }]}
-                >
-                  <Input />
-                </Form.Item>
+            <Form.Item label="Педагог" name="id_teacher">
+              <Select
+                showSearch
+                placeholder="Выберите педагога"
+                options={teacherOptions}
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+              />
+            </Form.Item>
 
-                <Form.Item
-                  label="Возраст"
-                  name="age"
-                  rules={[{ required: true, message: "Заполните поле" }]}
-                >
-                  <Input />
-                </Form.Item>
+            <Space>
+              <Form.Item>
+                <Button htmlType="submit" type="primary">
+                  Добавить
+                </Button>
+              </Form.Item>
 
-                <Form.Item
-                  label="Расписание"
-                  name="shedule"
-                  rules={[{ required: true, message: "Заполните поле" }]}
-                >
-                  <Input />
-                </Form.Item>
+              <Form.Item>
+                <Button danger onClick={onCreateReset}>
+                  Очистить
+                </Button>
+              </Form.Item>
 
-                <Form.Item
-                  label="Квантум"
-                  name="id_kvantum"
-                  rules={[{ required: true, message: "Заполните поле" }]}
-                >
-                  <Select
-                    showSearch
-                    placeholder="Выберите квантум"
-                    options={kvantumOptions}
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                  />
-                </Form.Item>
-
-                <Form.Item label="Педагог" name="id_teacher">
-                  <Select
-                    showSearch
-                    placeholder="Выберите педагога"
-                    options={teacherOptions}
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                  />
-                </Form.Item>
-
-                <Space>
-                  <Form.Item>
-                    <Button htmlType="submit" type="primary">
-                      Добавить
-                    </Button>
-                  </Form.Item>
-
-                  <Form.Item>
-                    <Button danger onClick={onCreateReset}>
-                      Очистить
-                    </Button>
-                  </Form.Item>
-
-                  <Form.Item>
-                    <Button onClick={onCancelCreate}>Отмена</Button>
-                  </Form.Item>
-                </Space>
-              </Form>
-            </Modal>
-          </Content>
-        </Layout>
-      </Layout>
+              <Form.Item>
+                <Button onClick={onCancelCreate}>Отмена</Button>
+              </Form.Item>
+            </Space>
+          </Form>
+        </Modal>
+      </ContainerWithSider>
     </>
   );
 };

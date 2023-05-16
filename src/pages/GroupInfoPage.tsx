@@ -3,10 +3,11 @@ import { Content } from "antd/es/layout/layout";
 import React, { FC, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { GroupsService } from "../api/GroupsService";
-import MySider from "../components/MySider";
+import MySider from "../components/MenuDrawer";
 import { GroupsAllInfo } from "../models/IGroup";
 import { IStudent, StudentsForTable } from "../models/IStudent";
 import { RouteNames } from "../router";
+import ContainerWithSider from "../components/ContainerWithSider";
 
 const GroupInfoPage: FC = () => {
   const location = useLocation();
@@ -87,26 +88,11 @@ const GroupInfoPage: FC = () => {
     getInfo();
   }, []);
   return (
-    <Layout hasSider>
-      <MySider />
-      <Layout className="site-layout" style={{ marginLeft: 200 }}>
-        <Content
-          style={{
-            margin: "24px 16px 0",
-            overflow: "initial",
-            minHeight: "95vh",
-          }}
-        >
-          <Card title={`${group.name} / Список учеников`}>
-            <Table
-              dataSource={dataSource}
-              columns={columns}
-              loading={isLoading}
-            />
-          </Card>
-        </Content>
-      </Layout>
-    </Layout>
+    <ContainerWithSider>
+      <Card title={`${group.name} / Список учеников`}>
+        <Table dataSource={dataSource} columns={columns} loading={isLoading} />
+      </Card>
+    </ContainerWithSider>
   );
 };
 

@@ -1,6 +1,6 @@
 import { Button, Card, Layout, Space, Typography } from "antd";
 import React, { FC, useEffect, useState } from "react";
-import MySider from "../components/MySider";
+import MySider from "../components/MenuDrawer";
 import { Content } from "antd/es/layout/layout";
 import { IGroup } from "../models/IGroup";
 import { useActions, useAppSelector } from "../hooks/hooks";

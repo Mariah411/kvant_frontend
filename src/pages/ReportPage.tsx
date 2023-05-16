@@ -1,9 +1,10 @@
 import { Layout, Tabs } from "antd";
 import React, { FC } from "react";
-import MySider from "../components/MySider";
+import MySider from "../components/MenuDrawer";
 import { Content } from "antd/es/layout/layout";
 import Reports from "../components/ReportComponets/Reports";
 import Attestation from "../components/ReportComponets/Attestation";
+import ContainerWithSider from "../components/ContainerWithSider";
 
 const ReportPage: FC = () => {
   const items = [
@@ -26,20 +27,9 @@ const ReportPage: FC = () => {
 
   return (
     <>
-      <Layout hasSider>
-        <MySider />
-        <Layout className="site-layout" style={{ marginLeft: 200 }}>
-          <Content
-            style={{
-              margin: "24px 16px 0",
-              overflow: "initial",
-              minHeight: "95vh",
-            }}
-          >
-            <Tabs items={items} />
-          </Content>
-        </Layout>
-      </Layout>
+      <ContainerWithSider>
+        <Tabs items={items} />
+      </ContainerWithSider>
     </>
   );
 };

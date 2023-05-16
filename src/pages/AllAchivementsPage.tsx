@@ -22,7 +22,7 @@ import { RatingService } from "../api/RatingService";
 import { StudentService } from "../api/StudentService";
 import { WorkersService } from "../api/WorkersService";
 import EditableTable from "../components/EditableTable";
-import MySider from "../components/MySider";
+import MySider from "../components/MenuDrawer";
 import { IAchievementForTable } from "../models/IAchievement";
 import { useLocation } from "react-router-dom";
 import { RouteNames } from "../router";

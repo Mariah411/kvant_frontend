@@ -1,6 +1,6 @@
 import { Button, Card, DatePicker, Layout, Space, Table } from "antd";
 import React, { FC, useEffect, useState } from "react";
-import MySider from "../MySider";
+import MySider from "../MenuDrawer";
 import { Content } from "antd/es/layout/layout";
 import { Group } from "antd/es/avatar";
 import { group } from "console";

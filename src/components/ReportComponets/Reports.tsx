@@ -1,7 +1,7 @@
 import { Button, Card, DatePicker, Layout, Space, Table, Tabs } from "antd";
 import { Content } from "antd/es/layout/layout";
 import React, { Children, FC, useEffect, useState } from "react";
-import MySider from "../MySider";
+import MySider from "../MenuDrawer";
 
 import {
   Chart as ChartJS,

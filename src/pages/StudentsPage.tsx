@@ -16,7 +16,7 @@ import { Content, Header } from "antd/es/layout/layout";
 import Title from "antd/es/typography/Title";
 import React, { FC, useEffect, useState } from "react";
 import { StudentService } from "../api/StudentService";
-import MySider from "../components/MySider";
+import MySider from "../components/MenuDrawer";
 import EditableTable from "../components/EditableTable";
 import {
   IStudent,
@@ -26,6 +26,7 @@ import {
 import { FormInstance } from "antd/lib/form";
 import { IGroup } from "../models/IGroup";
 import { GroupsService } from "../api/GroupsService";
+import ContainerWithSider from "../components/ContainerWithSider";
 
 const StudentsPage: FC = () => {
   const [dataSource, setDataSourse] = useState<StudentsForTable[]>([]);
@@ -191,117 +192,106 @@ const StudentsPage: FC = () => {
   return (
     <>
       {contextHolder}
-      <Layout hasSider>
-        <MySider />
-        <Layout className="site-layout" style={{ marginLeft: 200 }}>
-          <Content
-            style={{
-              margin: "24px 16px 0",
-              overflow: "initial",
-              minHeight: "95vh",
-            }}
-          >
-            <Card
-              title="Список учеников"
-              extra={
-                <Button type="primary" onClick={showModal}>
-                  Добавить ученика
-                </Button>
-              }
-            >
-              <EditableTable
-                cols={columns}
-                tableData={dataSource}
-                deleteData={StudentService.deleteStudent}
-                getData={getData}
-                inputNodes={inputNodes}
-                setFields={setFields}
-                saveData={saveData}
-              />
-              {/* <Table
+      <ContainerWithSider>
+        <Card
+          title="Список учеников"
+          extra={
+            <Button type="primary" onClick={showModal}>
+              Добавить ученика
+            </Button>
+          }
+        >
+          <EditableTable
+            cols={columns}
+            tableData={dataSource}
+            deleteData={StudentService.deleteStudent}
+            getData={getData}
+            inputNodes={inputNodes}
+            setFields={setFields}
+            saveData={saveData}
+          />
+          {/* <Table
                 loading={isLoading}
                 dataSource={dataSource}
                 columns={columns}
               /> */}
-            </Card>
-            <Modal
-              title="Новый ученик"
-              open={isModalVisible}
-              footer={null}
-              onCancel={onCancelCreate}
+        </Card>
+        <Modal
+          title="Новый ученик"
+          open={isModalVisible}
+          footer={null}
+          onCancel={onCancelCreate}
+        >
+          <Form form={form} onFinish={onCreate}>
+            <Form.Item
+              label="ФИО"
+              name="FIO"
+              rules={[{ required: true, message: "Заполните поле" }]}
             >
-              <Form form={form} onFinish={onCreate}>
-                <Form.Item
-                  label="ФИО"
-                  name="FIO"
-                  rules={[{ required: true, message: "Заполните поле" }]}
-                >
-                  <Input />
-                </Form.Item>
+              <Input />
+            </Form.Item>
 
-                <Form.Item
-                  label="Дата рождения"
-                  name="b_date"
-                  rules={[{ required: true, message: "Заполните поле" }]}
-                >
-                  <DatePicker />
-                </Form.Item>
+            <Form.Item
+              label="Дата рождения"
+              name="b_date"
+              rules={[{ required: true, message: "Заполните поле" }]}
+            >
+              <DatePicker />
+            </Form.Item>
 
-                <Form.Item
-                  label="Номер документа"
-                  name="num_doc"
-                  rules={[{ required: true, message: "Заполните поле" }]}
-                >
-                  <Input />
-                </Form.Item>
+            <Form.Item
+              label="Номер документа"
+              name="num_doc"
+              rules={[{ required: true, message: "Заполните поле" }]}
+            >
+              <Input />
+            </Form.Item>
 
-                <Form.Item
-                  label="Год обучения"
-                  name="year_study"
-                  rules={[{ required: true, message: "Заполните поле" }]}
-                >
-                  <Input type="number" />
-                </Form.Item>
+            <Form.Item
+              label="Год обучения"
+              name="year_study"
+              rules={[{ required: true, message: "Заполните поле" }]}
+            >
+              <Input type="number" />
+            </Form.Item>
 
-                <Form.Item label="Примечание" name="note">
-                  <Input />
-                </Form.Item>
+            <Form.Item label="Примечание" name="note">
+              <Input />
+            </Form.Item>
 
-                <Form.Item label="Группа" name="id_group">
-                  <Select
-                    showSearch
-                    placeholder="Выберите группу"
-                    options={groupOptions}
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                  />
-                </Form.Item>
+            <Form.Item label="Группа" name="id_group">
+              <Select
+                showSearch
+                placeholder="Выберите группу"
+                options={groupOptions}
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+              />
+            </Form.Item>
 
-                <Space>
-                  <Form.Item>
-                    <Button htmlType="submit" type="primary">
-                      Добавить
-                    </Button>
-                  </Form.Item>
+            <Space>
+              <Form.Item>
+                <Button htmlType="submit" type="primary">
+                  Добавить
+                </Button>
+              </Form.Item>
 
-                  <Form.Item>
-                    <Button danger onClick={onCreateReset}>
-                      Очистить
-                    </Button>
-                  </Form.Item>
+              <Form.Item>
+                <Button danger onClick={onCreateReset}>
+                  Очистить
+                </Button>
+              </Form.Item>
 
-                  <Form.Item>
-                    <Button onClick={onCancelCreate}>Отмена</Button>
-                  </Form.Item>
-                </Space>
-              </Form>
-            </Modal>
-          </Content>
-        </Layout>
-      </Layout>
+              <Form.Item>
+                <Button onClick={onCancelCreate}>Отмена</Button>
+              </Form.Item>
+            </Space>
+          </Form>
+        </Modal>
+      </ContainerWithSider>
     </>
   );
 };
