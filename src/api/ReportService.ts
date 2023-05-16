@@ -29,7 +29,40 @@ export class ReportService {
     end_date: Date | string
   ) {
     return await axios.post(
-      `/reports/attendance/Kvantums`,
+      `/reports/attendance/kvantums`,
+      { start_date, end_date },
+      ReqConfig()
+    );
+  }
+
+  static async getGroupsAchievements(
+    start_date: Date | string,
+    end_date: Date | string
+  ) {
+    return await axios.post(
+      `/reports/achievements/groups`,
+      { start_date, end_date },
+      ReqConfig()
+    );
+  }
+
+  static async getTeachersAchievements(
+    start_date: Date | string,
+    end_date: Date | string
+  ) {
+    return await axios.post(
+      `/reports/achievements/teachers`,
+      { start_date, end_date },
+      ReqConfig()
+    );
+  }
+
+  static async getKvantumsAchievements(
+    start_date: Date | string,
+    end_date: Date | string
+  ) {
+    return await axios.post(
+      `/reports/achievements/kvantums`,
       { start_date, end_date },
       ReqConfig()
     );

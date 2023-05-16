@@ -6,6 +6,7 @@ import { GroupsService } from "../api/GroupsService";
 import MySider from "../components/MySider";
 import { GroupsAllInfo } from "../models/IGroup";
 import { IStudent, StudentsForTable } from "../models/IStudent";
+import { RouteNames } from "../router";
 
 const GroupInfoPage: FC = () => {
   const location = useLocation();
@@ -37,7 +38,7 @@ const GroupInfoPage: FC = () => {
 
   const infoClick = (id: number | string) => {
     console.log(id);
-    navigate(`/ahievements/student/${id}`);
+    navigate(RouteNames.ACHIEVEMENT_STUDENT + `#${id}`);
   };
 
   const columns = [

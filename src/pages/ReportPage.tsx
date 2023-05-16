@@ -10,11 +10,16 @@ const ReportPage: FC = () => {
     {
       label: "Посещаемость",
       key: "0",
+      children: <Reports type_report={0} />,
+    },
+    {
+      label: "Достижения",
+      key: "1",
       children: <Reports type_report={1} />,
     },
     {
       label: "Аттестация",
-      key: "1",
+      key: "2",
       children: <Attestation />,
     },
   ];

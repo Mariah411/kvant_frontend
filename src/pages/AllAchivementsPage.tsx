@@ -24,9 +24,15 @@ import { WorkersService } from "../api/WorkersService";
 import EditableTable from "../components/EditableTable";
 import MySider from "../components/MySider";
 import { IAchievementForTable } from "../models/IAchievement";
+import { useLocation } from "react-router-dom";
+import { RouteNames } from "../router";
+import { IStudent } from "../models/IStudent";
+import ContainerWithSider from "../components/ContainerWithSider";
 
 const AllAchivementsPage: FC = () => {
+  const [title, setTitle] = useState("");
   const [dataSource, setDataSourse] = useState<IAchievementForTable[]>([]);
+  const location = useLocation();
 
   const [teacherOptions, setTeacherOptions] = useState<
     { value: string; label: string }[]
@@ -101,7 +107,29 @@ const AllAchivementsPage: FC = () => {
   };
 
   const getData = async () => {
-    await AchievementService.getAllAchivements().then((response) => {
+    //console.log(location.hash);
+    const func = () => {
+      switch (location.pathname) {
+        case RouteNames.ALL_ACHIEVEMENTS:
+          return AchievementService.getAllAchivements();
+        case RouteNames.MY_ACHIEVEMENTS:
+          return AchievementService.getWorkerAchievements(
+            location.hash.replace("#", "")
+          );
+
+        case RouteNames.ACHIEVEMENT_STUDENT: {
+          getStudent();
+          return AchievementService.getStudentAchievements(
+            location.hash.replace("#", "")
+          );
+        }
+
+        default:
+          return AchievementService.getAllAchivements();
+      }
+    };
+
+    await func().then((response) => {
       //setAchievements(response.data);
       const new_data = response.data.map((el) => {
         let new_el = {
@@ -150,6 +178,12 @@ const AllAchivementsPage: FC = () => {
     );
 
     setRatingOptions(options);
+  };
+
+  const getStudent = async () => {
+    await StudentService.getStudentById(location.hash.replace("#", "")).then(
+      (response) => setTitle(` / ` + response.data.FIO)
+    );
   };
 
   useEffect(() => {
@@ -281,151 +315,124 @@ const AllAchivementsPage: FC = () => {
   return (
     <>
       {contextHolder}
-      <Layout hasSider>
-        <MySider />
-        <Layout className="site-layout" style={{ marginLeft: 200 }}>
-          <Content
-            style={{
-              margin: "24px 16px 0",
-              overflow: "initial",
-              minHeight: "95vh",
-            }}
-          >
-            <Card
-              title="Список достижений"
-              extra={
-                <Button type="primary" onClick={showModal}>
-                  Добавить достижение
-                </Button>
-              }
+      <ContainerWithSider>
+        <Card
+          title={"Список достижений" + title}
+          extra={
+            <Button type="primary" onClick={showModal}>
+              Добавить достижение
+            </Button>
+          }
+        >
+          <EditableTable
+            cols={columns}
+            tableData={dataSource}
+            deleteData={AchievementService.deleteAchievement}
+            getData={getData}
+            inputNodes={inputNodes}
+            setFields={setFields}
+            saveData={saveData}
+            location={location}
+          />
+        </Card>
+
+        <Modal
+          title="Новое достижение"
+          open={isModalVisible}
+          footer={null}
+          onCancel={onCancelCreate}
+        >
+          <Form form={form} onFinish={onCreate}>
+            <Form.Item
+              label="Название мероприятия"
+              name="name"
+              rules={[{ required: true, message: "Заполните поле" }]}
             >
-              <EditableTable
-                cols={columns}
-                tableData={dataSource}
-                deleteData={AchievementService.deleteAchievement}
-                getData={getData}
-                inputNodes={inputNodes}
-                setFields={setFields}
-                saveData={saveData}
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Дата"
+              name="date"
+              rules={[{ required: true, message: "Заполните поле" }]}
+            >
+              <DatePicker />
+            </Form.Item>
+
+            <Form.Item
+              name="imageFile"
+              label="Диплом"
+              rules={[{ required: true, message: "Заполните поле" }]}
+            >
+              <input
+                type="file"
+                onChange={(e) => {
+                  if (!e.target.files) return;
+                  setImage(e.target.files[0]);
+                }}
+              ></input>
+            </Form.Item>
+
+            <Form.Item
+              label="Место"
+              name="place"
+              rules={[{ required: true, message: "Заполните поле" }]}
+            >
+              <InputNumber />
+            </Form.Item>
+
+            <Form.Item label="Уровень" name="id_rating">
+              <Select placeholder="Выберите уровень" options={ratingOptions} />
+            </Form.Item>
+
+            <Form.Item label="Педагоги" name="workers">
+              <Select
+                showSearch
+                mode="multiple"
+                placeholder="Выберите педагогов"
+                options={teacherOptions}
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
               />
-            </Card>
+            </Form.Item>
 
-            <Modal
-              title="Новое достижение"
-              open={isModalVisible}
-              footer={null}
-              onCancel={onCancelCreate}
-            >
-              <Form form={form} onFinish={onCreate}>
-                <Form.Item
-                  label="Название мероприятия"
-                  name="name"
-                  rules={[{ required: true, message: "Заполните поле" }]}
-                >
-                  <Input />
-                </Form.Item>
+            <Form.Item label="Участники" name="students">
+              <Select
+                mode="multiple"
+                showSearch
+                placeholder="Выберите учеников"
+                options={studentsOptions}
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+              />
+            </Form.Item>
 
-                <Form.Item
-                  label="Дата"
-                  name="date"
-                  rules={[{ required: true, message: "Заполните поле" }]}
-                >
-                  <DatePicker />
-                </Form.Item>
+            <Space>
+              <Form.Item>
+                <Button htmlType="submit" type="primary">
+                  Добавить
+                </Button>
+              </Form.Item>
 
-                {/* <Form.Item
-                  label="Диплом"
-                  name="diplom"
-                  rules={[{ required: true, message: "Заполните поле" }]}
-                >
-                  <Input />
-                </Form.Item> */}
+              <Form.Item>
+                <Button danger onClick={onCreateReset}>
+                  Очистить
+                </Button>
+              </Form.Item>
 
-                <Form.Item
-                  name="imageFile"
-                  label="Диплом"
-                  rules={[{ required: true, message: "Заполните поле" }]}
-                  // valuePropName="fileList"
-                  // getValueFromEvent={normFile}
-                >
-                  {/* <Upload name="image" action="/upload.do" listType="picture"> */}
-                  {/* <Button> Нажмите для загрузки</Button> */}
-                  <input
-                    type="file"
-                    onChange={(e) => {
-                      if (!e.target.files) return;
-                      setImage(e.target.files[0]);
-                    }}
-                  ></input>
-
-                  {/* <input type="file" name="image" /> */}
-                </Form.Item>
-
-                <Form.Item
-                  label="Место"
-                  name="place"
-                  rules={[{ required: true, message: "Заполните поле" }]}
-                >
-                  <InputNumber />
-                </Form.Item>
-
-                <Form.Item label="Уровень" name="id_rating">
-                  <Select
-                    placeholder="Выберите уровень"
-                    options={ratingOptions}
-                  />
-                </Form.Item>
-
-                <Form.Item label="Педагоги" name="workers">
-                  <Select
-                    showSearch
-                    mode="multiple"
-                    placeholder="Выберите педагогов"
-                    options={teacherOptions}
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                  />
-                </Form.Item>
-
-                <Form.Item label="Участники" name="students">
-                  <Select
-                    mode="multiple"
-                    showSearch
-                    placeholder="Выберите учеников"
-                    options={studentsOptions}
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                  />
-                </Form.Item>
-
-                <Space>
-                  <Form.Item>
-                    <Button htmlType="submit" type="primary">
-                      Добавить
-                    </Button>
-                  </Form.Item>
-
-                  <Form.Item>
-                    <Button danger onClick={onCreateReset}>
-                      Очистить
-                    </Button>
-                  </Form.Item>
-
-                  <Form.Item>
-                    <Button onClick={onCancelCreate}>Отмена</Button>
-                  </Form.Item>
-                </Space>
-              </Form>
-            </Modal>
-          </Content>
-        </Layout>
-      </Layout>
+              <Form.Item>
+                <Button onClick={onCancelCreate}>Отмена</Button>
+              </Form.Item>
+            </Space>
+          </Form>
+        </Modal>
+      </ContainerWithSider>
     </>
   );
 };

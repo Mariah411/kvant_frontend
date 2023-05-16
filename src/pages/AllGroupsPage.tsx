@@ -20,9 +20,12 @@ import EditableTable from "../components/EditableTable";
 import MySider from "../components/MySider";
 import { GroupForTable } from "../models/IGroup";
 import { RouteNames } from "../router";
+import { IStudent } from "../models/IStudent";
+import { StudentService } from "../api/StudentService";
 
 const AllGroupsPage: FC = () => {
   const [dataSource, setDataSourse] = useState<GroupForTable[]>([]);
+  const [student, setStudent] = useState<IStudent>({} as IStudent);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [teacherOptions, setTeacherOptions] = useState<
@@ -224,7 +227,7 @@ const AllGroupsPage: FC = () => {
     <>
       {contextHolder}
       <Layout hasSider>
-        <MySider />
+        <MySider selectedKey="groups-e" />
         <Layout className="site-layout" style={{ marginLeft: 200 }}>
           <Content
             style={{

@@ -30,11 +30,13 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import { ColumnsType } from "antd/es/table";
 import { CloseOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
+import ContainerWithSider from "../components/ContainerWithSider";
 dayjs.extend(customParseFormat);
 require("dayjs/locale/ru");
 
 const { RangePicker } = DatePicker;
 type RangeValue = [Dayjs | null, Dayjs | null] | null;
+const defaultDatesValue: RangeValue = [dayjs().add(-1, "y"), dayjs()];
 
 const VisitsPage: FC = () => {
   const location = useLocation();
@@ -67,15 +69,9 @@ const VisitsPage: FC = () => {
     });
   };
 
-  const [Interval1, setInterval1] = useState<RangeValue>([
-    dayjs().add(-1, "y"),
-    dayjs(),
-  ]);
+  const [Interval1, setInterval1] = useState<RangeValue>(defaultDatesValue);
 
-  const [Interval2, setInterval2] = useState<RangeValue>([
-    dayjs().add(-1, "y"),
-    dayjs().add(1, "y"),
-  ]);
+  const [Interval2, setInterval2] = useState<RangeValue>(defaultDatesValue);
 
   const getdate = (v: IVisit) => ({
     title: (
@@ -292,78 +288,85 @@ const VisitsPage: FC = () => {
     <>
       {contextHolder}
 
-      <Layout hasSider>
-        <MySider />
-        <Layout className="site-layout" style={{ marginLeft: 200 }}>
-          <Content
-            style={{
-              margin: "24px 16px 0",
-              overflow: "initial",
-              minHeight: "95vh",
-            }}
+      <ContainerWithSider>
+        <Card title="Посещаемость">
+          <Space style={{ marginBottom: 10 }}>
+            <RangePicker
+              defaultValue={Interval1}
+              value={Interval1}
+              onChange={(value) => setInterval1(value)}
+              format={"DD.MM.YYYY"}
+            />
+            <Button onClick={() => setInterval1(defaultDatesValue)}>
+              Сбросить
+            </Button>
+          </Space>
+
+          <Form
+            form={form1}
+            onFinish={createVisitorAttestation}
+            initialValues={{ type: 1, visit_date: dayjs() }}
           >
-            <Card title="Посещаемость">
-              <RangePicker
-                defaultValue={Interval1}
-                value={Interval1}
-                onChange={(value) => setInterval1(value)}
-                format={"DD.MM.YYYY"}
-                style={{ marginBottom: 10 }}
-              />
+            <Space>
+              <Form.Item name="visit_date">
+                <DatePicker format={"DD.MM.YYYY"} />
+              </Form.Item>
+              <Form.Item>
+                <Button type="primary" htmlType="submit">
+                  Добавить занятие
+                </Button>
+              </Form.Item>
+              <Form.Item name="type" />
+            </Space>
+          </Form>
 
-              <Form
-                form={form1}
-                onFinish={createVisitorAttestation}
-                initialValues={{ type: 1, visit_date: dayjs() }}
-              >
-                <Space>
-                  <Form.Item name="visit_date">
-                    <DatePicker format={"DD.MM.YYYY"} />
-                  </Form.Item>
-                  <Form.Item>
-                    <Button htmlType="submit">Добавить занятие</Button>
-                  </Form.Item>
-                  <Form.Item name="type" />
-                </Space>
-              </Form>
+          <Table
+            scroll={{ x: 1500 }}
+            loading={isLoading}
+            dataSource={rows1}
+            columns={cols1}
+            pagination={false}
+          />
+        </Card>
 
-              <Table
-                scroll={{ x: 1500 }}
-                loading={isLoading}
-                dataSource={rows1}
-                columns={cols1}
-              />
-            </Card>
+        <Card title="Итоговая аттестация">
+          <Space style={{ marginBottom: 10 }}>
+            <RangePicker
+              defaultValue={Interval2}
+              value={Interval2}
+              onChange={(value) => setInterval2(value)}
+              format={"DD.MM.YYYY"}
+            />
+            <Button onClick={() => setInterval2(defaultDatesValue)}>
+              Сбросить
+            </Button>
+          </Space>
 
-            <Card title="Итоговая аттестация">
-              <RangePicker
-                defaultValue={Interval2}
-                value={Interval2}
-                onChange={(value) => setInterval2(value)}
-                format={"DD.MM.YYYY"}
-                style={{ marginBottom: 10 }}
-              />
-
-              <Form
-                form={form2}
-                onFinish={createVisitorAttestation}
-                initialValues={{ type: 2, visit_date: dayjs() }}
-              >
-                <Space>
-                  <Form.Item name="visit_date">
-                    <DatePicker format={"DD.MM.YYYY"} />
-                  </Form.Item>
-                  <Form.Item>
-                    <Button htmlType="submit">Добавить результат</Button>
-                  </Form.Item>
-                  <Form.Item name="type" />
-                </Space>
-              </Form>
-              <Table loading={isLoading} dataSource={rows2} columns={cols2} />
-            </Card>
-          </Content>
-        </Layout>
-      </Layout>
+          <Form
+            form={form2}
+            onFinish={createVisitorAttestation}
+            initialValues={{ type: 2, visit_date: dayjs() }}
+          >
+            <Space>
+              <Form.Item name="visit_date">
+                <DatePicker format={"DD.MM.YYYY"} />
+              </Form.Item>
+              <Form.Item>
+                <Button type="primary" htmlType="submit">
+                  Добавить результат
+                </Button>
+              </Form.Item>
+              <Form.Item name="type" />
+            </Space>
+          </Form>
+          <Table
+            loading={isLoading}
+            dataSource={rows2}
+            columns={cols2}
+            pagination={false}
+          />
+        </Card>
+      </ContainerWithSider>
     </>
   );
 };

@@ -1,6 +1,6 @@
-import { Menu } from "antd";
+import { Button, Menu } from "antd";
 import Sider from "antd/es/layout/Sider";
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 
 import {
   AppstoreOutlined,
@@ -22,13 +22,18 @@ import {
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { useActions, useAppSelector } from "../hooks/hooks";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { RouteNames } from "../router";
 import { isAdmin, isEditor, isTeacher } from "../utils";
 import { group } from "console";
 
-const MySider: FC = () => {
+type Props = {
+  selectedKey?: string;
+};
+
+const MySider: FC<Props> = (props: Props) => {
   const { user } = useAppSelector((state) => state.auth);
+  const location = useLocation();
   const navigate = useNavigate();
 
   const { logout } = useActions();
@@ -42,33 +47,33 @@ const MySider: FC = () => {
           icon: React.createElement(SolutionOutlined),
           label: "Ученики",
           onClick: () => navigate(RouteNames.STUDENTS),
-          key: "students-a",
+          key: RouteNames.STUDENTS,
         },
         {
           icon: React.createElement(TeamOutlined),
           label: "Группы",
           onClick: () => navigate(RouteNames.ALL_GROUPS),
-          key: "groups-a",
+          key: RouteNames.ALL_GROUPS,
         },
 
         {
           icon: React.createElement(UserOutlined),
           label: "Работники",
           onClick: () => navigate(RouteNames.WORKERS),
-          key: "workers-a",
+          key: RouteNames.WORKERS,
         },
 
         {
           icon: React.createElement(BarChartOutlined),
           label: "Отчеты",
-          onClick: () => navigate(RouteNames.MAIN),
-          key: "reports-a",
+          onClick: () => navigate(RouteNames.REPORTS),
+          key: RouteNames.REPORTS,
         },
         {
           icon: React.createElement(AppstoreAddOutlined),
           label: "Дополнительно",
           onClick: () => navigate(RouteNames.ADDITIONAL),
-          key: "add-a",
+          key: RouteNames.ADDITIONAL,
         },
       ],
     },
@@ -83,27 +88,27 @@ const MySider: FC = () => {
           icon: React.createElement(SolutionOutlined),
           label: "Все ученики",
           onClick: () => navigate(RouteNames.STUDENTS),
-          key: "students-e",
+          key: RouteNames.STUDENTS,
         },
         {
           icon: React.createElement(TeamOutlined),
           label: "Все группы",
           onClick: () => navigate(RouteNames.ALL_GROUPS),
-          key: "groups-e",
+          key: RouteNames.ALL_GROUPS,
         },
 
         {
           icon: React.createElement(BarChartOutlined),
           label: "Отчеты",
           onClick: () => navigate(RouteNames.REPORTS),
-          key: "reports-e",
+          key: RouteNames.REPORTS,
         },
 
         {
           icon: React.createElement(FileDoneOutlined),
           label: "Все достижения",
           onClick: () => navigate(RouteNames.ALL_ACHIEVEMENTS),
-          key: "achivements-e",
+          key: RouteNames.ALL_ACHIEVEMENTS,
         },
       ],
       //onClick: () => navigate(RouteNames.MAIN),
@@ -119,13 +124,13 @@ const MySider: FC = () => {
           icon: React.createElement(BookOutlined),
           label: "Мои группы",
           onClick: () => navigate(RouteNames.MY_GROUPS),
-          key: "groups-t",
+          key: RouteNames.MY_GROUPS,
         },
         {
           icon: React.createElement(CrownOutlined),
           label: "Мои достижения",
-          onClick: () => navigate(RouteNames.ALL_ACHIEVEMENTS),
-          key: "achivements-t",
+          onClick: () => navigate(RouteNames.MY_ACHIEVEMENTS + `#${user.id}`),
+          key: RouteNames.MY_ACHIEVEMENTS,
         },
       ],
     },
@@ -162,24 +167,7 @@ const MySider: FC = () => {
     ...logout_item,
   ].map((el, index) => ({ ...el, key: index + 1 }));
 
-  useEffect(() => {
-    // items = [
-    //   {
-    //     icon: React.createElement(UserOutlined),
-    //     label: user.FIO,
-    //     onClick: () => navigate(RouteNames.MAIN),
-    //   }
-    //   getArr(),
-    //   {
-    //     icon: React.createElement(LogoutOutlined),
-    //     label: "Выйти",
-    //     danger: true,
-    //     onClick: logout,
-    //   },
-    // ].map((el, index) => ({ ...el, key: index + 1 }));
-    // console.log(items);
-    // console.log(getArr());
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <Sider
@@ -200,7 +188,13 @@ const MySider: FC = () => {
           background: "rgba(255, 255, 255, 0.2)",
         }}
       />
-      <Menu theme="light" mode="inline" items={items} />
+
+      <Menu
+        theme="light"
+        mode="inline"
+        items={items}
+        selectedKeys={[location.pathname]}
+      />
     </Sider>
   );
 };

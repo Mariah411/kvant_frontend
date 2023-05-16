@@ -27,6 +27,7 @@ type Props = {
   saveData: any;
   isInfo?: boolean;
   infoClick?: any;
+  location?: any;
 };
 
 const EditableTable = (props: Props) => {
@@ -40,6 +41,7 @@ const EditableTable = (props: Props) => {
     saveData,
     isInfo,
     infoClick,
+    location,
   } = props;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -116,6 +118,11 @@ const EditableTable = (props: Props) => {
     setIsLoading(true);
     getData().then(() => setIsLoading(false));
   }, []);
+
+  useEffect(() => {
+    setIsLoading(true);
+    getData().then(() => setIsLoading(false));
+  }, [location]);
 
   const [editingKey, setEditingKey] = useState(-1);
 

@@ -1,9 +1,11 @@
+import { IRole } from "./IRole";
+
 export interface IUser {
   id: number;
   email: string;
   password: string;
   FIO: string;
-  roles: any[];
+  roles: IRole[];
   achivements?: any[];
 }
 

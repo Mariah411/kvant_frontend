@@ -1,4 +1,4 @@
-import { Button, Card, Layout, Table } from "antd";
+import { Button, Card, DatePicker, Layout, Space, Table } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import MySider from "../MySider";
 import { Content } from "antd/es/layout/layout";
@@ -7,12 +7,23 @@ import { group } from "console";
 import { GroupForTable, IGroup } from "../../models/IGroup";
 import { GroupsService } from "../../api/GroupsService";
 
+import dayjs from "dayjs";
+import { Dayjs } from "dayjs";
+
+const { RangePicker } = DatePicker;
+type RangeValue = [Dayjs | null, Dayjs | null] | null;
+const defaultDatesValue: RangeValue = [dayjs().add(-1, "y"), dayjs()];
+
 const Attestation: FC = () => {
   const [data, setData] = useState([] as IGroup[]);
   const [group_id, set_group_id] = useState<string | number>("");
   const [ratingData, setRatingData] = useState([] as any);
   const [loading, setIsLoading] = useState(false);
 
+  const [Interval, setInterval] = useState<RangeValue>([
+    dayjs().add(-1, "y"),
+    dayjs(),
+  ]);
   const infoClick = (key: any) => {
     set_group_id(key);
   };
@@ -72,12 +83,17 @@ const Attestation: FC = () => {
   };
 
   const getRating = async () => {
-    const startDate = new Date("2021-05-07");
-    const endDate = new Date("2023-05-25");
+    if (!Interval) return;
+    const start_date = (Interval[0] || dayjs().add(-1, "y")).format(
+      "YYYY-MM-DD"
+    );
+
+    const end_date = (Interval[1] || dayjs()).format("YYYY-MM-DD");
+
     const { data } = await GroupsService.getGroupRating(
       group_id,
-      startDate,
-      endDate
+      start_date,
+      end_date
     );
     const new_data = data.map((el) => ({ ...el, key: el.id }));
     setRatingData(new_data);
@@ -91,9 +107,19 @@ const Attestation: FC = () => {
   useEffect(() => {
     setIsLoading(true);
     getRating().then(() => setIsLoading(false));
-  }, [group_id]);
+  }, [group_id, Interval]);
   return (
     <Card>
+      <Space style={{ marginBottom: 10 }}>
+        <RangePicker
+          defaultValue={Interval}
+          value={Interval}
+          onChange={(value) => setInterval(value)}
+          format={"DD.MM.YYYY"}
+        />
+        <Button onClick={() => setInterval(defaultDatesValue)}>Сбросить</Button>
+      </Space>
+
       <Table loading={loading} dataSource={data} columns={columns} />
       {group_id && (
         <>
