@@ -1,3 +1,4 @@
+import { Dayjs } from "dayjs";
 import { IUser } from "./IUser";
 import { IRating } from "./IRating";
 import { IStudent } from "./IStudent";
@@ -5,7 +6,7 @@ import { IStudent } from "./IStudent";
 export interface IAchievement {
   id: number;
   name: string;
-  date: Date;
+  date: Date | Dayjs;
   diplom: string;
   place: number;
   id_rating: number;
@@ -18,7 +19,7 @@ export interface IAchievement {
 export interface IAchievementForTable {
   id: number;
   name: string;
-  date: Date;
+  date: Date | string;
   diplom: string;
   place: number;
   id_rating: string;

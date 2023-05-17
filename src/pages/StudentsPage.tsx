@@ -27,6 +27,10 @@ import { FormInstance } from "antd/lib/form";
 import { IGroup } from "../models/IGroup";
 import { GroupsService } from "../api/GroupsService";
 import ContainerWithSider from "../components/ContainerWithSider";
+import { filterData } from "../utils";
+
+import dayjs from "dayjs";
+import { Dayjs } from "dayjs";
 
 const StudentsPage: FC = () => {
   const [dataSource, setDataSourse] = useState<StudentsForTable[]>([]);
@@ -115,6 +119,8 @@ const StudentsPage: FC = () => {
       dataIndex: "b_date",
       key: "b_date",
       editable: true,
+      sorter: (a: { b_date: string }, b: { b_date: string }) =>
+        dayjs(a.b_date, "DD.MM.YYY") > dayjs(b.b_date, "DD.MM.YYY") ? 1 : -1,
     },
     {
       title: "Год обучения",
@@ -140,7 +146,8 @@ const StudentsPage: FC = () => {
   const inputNodes = {
     FIO: <Input />,
     num_doc: <Input />,
-    b_date: <Input />,
+    b_date: <DatePicker format={"DD.MM.YYYY"} />,
+    //b_date: <Input />,
     year_study: <InputNumber />,
     note: <Input />,
     group_name: (
@@ -156,13 +163,21 @@ const StudentsPage: FC = () => {
   };
 
   const setFields = (record: StudentsForTable) => {
-    //console.log(record.2015-03-04);
+    console.log(record.b_date);
     const id = groupOptions.findIndex((el) => el.label === record.group_name);
     //console.log(id);
     if (id != -1) {
-      return { ...record, group_name: groupOptions[id].value };
+      return {
+        ...record,
+        group_name: groupOptions[id].value,
+        b_date: dayjs(record.b_date, "DD.MM.YYYY"),
+      };
     } else {
-      return { ...record, group_name: "" };
+      return {
+        ...record,
+        group_name: "",
+        b_date: dayjs(record.b_date, "DD.MM.YYYY"),
+      };
     }
   };
 
@@ -176,16 +191,23 @@ const StudentsPage: FC = () => {
     }
   };
 
-  const getData = async () => {
+  const getData = async (filterValue?: string) => {
     const response = await StudentService.getStutentsWithGroup();
 
     const arr = response.data;
 
-    const new_data = arr.map((el) => {
-      let new_el = { ...el, group_name: el.group?.name || "", key: el.id };
+    let new_data = arr.map((el) => {
+      let new_el = {
+        ...el,
+        group_name: el.group?.name || "",
+        key: el.id,
+        b_date: dayjs(el.b_date).format("DD.MM.YYYY"),
+      };
       delete new_el.group;
       return new_el;
     });
+
+    if (filterValue) new_data = filterData(new_data, filterValue);
     setDataSourse(new_data);
   };
 

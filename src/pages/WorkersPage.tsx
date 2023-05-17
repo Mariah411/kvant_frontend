@@ -19,6 +19,7 @@ import EditableTable from "../components/EditableTable";
 import MySider from "../components/MenuDrawer";
 import { UserForTable } from "../models/IUser";
 import ContainerWithSider from "../components/ContainerWithSider";
+import { filterData } from "../utils";
 
 const WorkersPage: FC = () => {
   const [dataSource, setDataSourse] = useState<UserForTable[]>([]);
@@ -116,12 +117,12 @@ const WorkersPage: FC = () => {
     setRolesOptons(options);
   };
 
-  const getData = async () => {
+  const getData = async (filterValue?: string) => {
     const response = await WorkersService.getWorkers();
 
     const arr = response.data;
 
-    const new_data = arr.map((el) => {
+    let new_data = arr.map((el) => {
       let new_el = {
         ...el,
         roles: el.roles?.map((r) => r.description).toString(),
@@ -129,6 +130,8 @@ const WorkersPage: FC = () => {
       };
       return new_el;
     });
+
+    if (filterValue) new_data = filterData(new_data, filterValue);
     setDataSourse(new_data);
   };
 
@@ -162,7 +165,7 @@ const WorkersPage: FC = () => {
       {contextHolder}
       <ContainerWithSider>
         <Card
-          title="Список групп"
+          title="Список работников"
           extra={
             <Button type="primary" onClick={showModal}>
               Добавить работника

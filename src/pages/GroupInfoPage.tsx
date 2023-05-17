@@ -8,6 +8,7 @@ import { GroupsAllInfo } from "../models/IGroup";
 import { IStudent, StudentsForTable } from "../models/IStudent";
 import { RouteNames } from "../router";
 import ContainerWithSider from "../components/ContainerWithSider";
+import dayjs from "dayjs";
 
 const GroupInfoPage: FC = () => {
   const location = useLocation();
@@ -25,9 +26,14 @@ const GroupInfoPage: FC = () => {
       await GroupsService.getGroupInfo(id).then((response) => {
         setGroup(response.data);
         const new_data = response.data.students.map((el) => {
-          let new_el = { ...el, key: el.id };
+          let new_el = {
+            ...el,
+            key: el.id,
+            b_date: dayjs(el.b_date).format("DD.MM.YYYY"),
+          };
           return new_el;
         });
+
         setDataSourse(new_data);
         setIsLoading(false);
       });

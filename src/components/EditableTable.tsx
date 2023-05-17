@@ -223,8 +223,9 @@ const EditableTable = (props: Props) => {
     };
   });
 
-  const onSearch = (value: string) => {
-    getData(value);
+  const onSearch = async (value: string) => {
+    setIsLoading(true);
+    await getData(value).then(() => setIsLoading(false));
   };
 
   return (
@@ -235,6 +236,7 @@ const EditableTable = (props: Props) => {
         placeholder="Введите текст для поиска"
         onSearch={onSearch}
         style={{ width: 500, marginBottom: 20 }}
+        enterButton
       />
       <Form form={form} component={false}>
         <Table

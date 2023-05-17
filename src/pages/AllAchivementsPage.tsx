@@ -29,6 +29,7 @@ import { RouteNames } from "../router";
 import { IStudent } from "../models/IStudent";
 import ContainerWithSider from "../components/ContainerWithSider";
 import { filterData } from "../utils";
+import dayjs from "dayjs";
 
 const AllAchivementsPage: FC = () => {
   const [title, setTitle] = useState("");
@@ -139,6 +140,7 @@ const AllAchivementsPage: FC = () => {
           workers: el.workers?.map((w) => w.FIO).toString(),
           id_rating: el.rating?.description,
           key: el.id,
+          date: dayjs(el.date).format("DD.MM.YYYY"),
         };
         return new_el;
       });
@@ -217,8 +219,8 @@ const AllAchivementsPage: FC = () => {
       key: "date",
       width: "10%",
       editable: true,
-      sorter: (a: { date: Date }, b: { date: Date }) =>
-        a.date > b.date ? 1 : -1,
+      sorter: (a: { date: string }, b: { date: string }) =>
+        dayjs(a.date, "DD.MM.YYY") > dayjs(b.date, "DD.MM.YYY") ? 1 : -1,
     },
     {
       title: "Диплом",
@@ -262,7 +264,7 @@ const AllAchivementsPage: FC = () => {
 
   const inputNodes = {
     name: <Input />,
-    date: <Input />,
+    date: <DatePicker format={"DD.MM.YYYY"} />,
     diplom: <input type="file" />,
     place: <Input />,
     id_rating: (
@@ -313,6 +315,7 @@ const AllAchivementsPage: FC = () => {
       workers: selectedWorkers,
       students: selectedStudents,
       id_rating: id_rating,
+      date: dayjs(record.date, "DD.MM.YYYY"),
     };
   };
 

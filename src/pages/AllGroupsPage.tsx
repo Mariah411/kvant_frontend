@@ -23,6 +23,7 @@ import { RouteNames } from "../router";
 import { IStudent } from "../models/IStudent";
 import { StudentService } from "../api/StudentService";
 import ContainerWithSider from "../components/ContainerWithSider";
+import { filterData } from "../utils";
 
 const AllGroupsPage: FC = () => {
   const [dataSource, setDataSourse] = useState<GroupForTable[]>([]);
@@ -140,12 +141,12 @@ const AllGroupsPage: FC = () => {
     ),
   };
 
-  const getData = async () => {
+  const getData = async (filterValue?: string) => {
     const response = await GroupsService.getGroupsWithKvantumsAndTeachers();
 
     const arr = response.data;
 
-    const new_data = arr.map((el) => {
+    let new_data = arr.map((el) => {
       let new_el = {
         ...el,
         id_teacher: el.teacher.FIO || "",
@@ -154,6 +155,9 @@ const AllGroupsPage: FC = () => {
       };
       return new_el;
     });
+
+    if (filterValue) new_data = filterData(new_data, filterValue);
+
     setDataSourse(new_data);
   };
 
