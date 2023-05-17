@@ -149,6 +149,7 @@ const MenuDrawer: FC<Props> = (props: Props) => {
       icon: React.createElement(UserOutlined),
       label: user.FIO,
       onClick: () => navigate(RouteNames.MAIN),
+      key: RouteNames.MAIN,
     },
   ];
 
@@ -158,6 +159,7 @@ const MenuDrawer: FC<Props> = (props: Props) => {
       label: "Выйти",
       danger: true,
       onClick: logout,
+      key: "logout",
     },
   ];
 
@@ -165,20 +167,16 @@ const MenuDrawer: FC<Props> = (props: Props) => {
     ...user_item,
     ...getArr(),
     ...logout_item,
-  ].map((el, index) => ({ ...el, key: index + 1 }));
+  ].map((el, index) => {
+    if (index === 0) return { ...el, key: RouteNames.MAIN };
+
+    return { ...el, key: index + 1 };
+  });
 
   useEffect(() => {}, []);
 
   return (
     <>
-      <div
-        style={{
-          height: 32,
-          margin: 16,
-          background: "rgba(255, 255, 255, 0.2)",
-        }}
-      />
-
       <Menu
         theme="light"
         mode="inline"

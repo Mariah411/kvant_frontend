@@ -6,6 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import { store } from "./store";
 import { ConfigProvider } from "antd";
 import ru_RU from "antd/locale/ru_RU";
+import "./App.css";
 
 //      colorPrimary: "#722ed1",
 

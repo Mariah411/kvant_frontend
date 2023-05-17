@@ -22,7 +22,7 @@ const GroupList = () => {
   return (
     <>
       <Title level={5}>Мои группы</Title>
-      <Space>
+      <Space wrap={true}>
         {!groups.length && <Empty />}
         {groups.map((group) => (
           <Card title={group.name} style={{ width: 350 }} key={group.id}>

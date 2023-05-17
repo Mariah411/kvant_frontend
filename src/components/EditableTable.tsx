@@ -17,6 +17,8 @@ import { GroupForTable } from "../models/IGroup";
 import { KvantumForTable } from "../models/IKvamtum";
 import { RaitingForTable } from "../models/IRating";
 
+import Search from "antd/es/input/Search";
+
 type Props = {
   cols: any;
   tableData: any;
@@ -221,9 +223,19 @@ const EditableTable = (props: Props) => {
     };
   });
 
+  const onSearch = (value: string) => {
+    getData(value);
+  };
+
   return (
     <>
       {contextHolder}
+
+      <Search
+        placeholder="Введите текст для поиска"
+        onSearch={onSearch}
+        style={{ width: 500, marginBottom: 20 }}
+      />
       <Form form={form} component={false}>
         <Table
           components={{
@@ -236,6 +248,7 @@ const EditableTable = (props: Props) => {
           dataSource={tableData}
           columns={mergedColumns}
           rowClassName="editable-row"
+          scroll={{ x: 900 }}
           pagination={{
             onChange: cancel,
           }}

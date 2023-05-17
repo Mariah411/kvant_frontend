@@ -28,6 +28,7 @@ import { useLocation } from "react-router-dom";
 import { RouteNames } from "../router";
 import { IStudent } from "../models/IStudent";
 import ContainerWithSider from "../components/ContainerWithSider";
+import { filterData } from "../utils";
 
 const AllAchivementsPage: FC = () => {
   const [title, setTitle] = useState("");
@@ -106,7 +107,7 @@ const AllAchivementsPage: FC = () => {
     );
   };
 
-  const getData = async () => {
+  const getData = async (filterValue?: string) => {
     //console.log(location.hash);
     const func = () => {
       switch (location.pathname) {
@@ -131,7 +132,7 @@ const AllAchivementsPage: FC = () => {
 
     await func().then((response) => {
       //setAchievements(response.data);
-      const new_data = response.data.map((el) => {
+      let new_data = response.data.map((el) => {
         let new_el = {
           ...el,
           students: el.students?.map((s) => s.FIO).toString(),
@@ -141,6 +142,7 @@ const AllAchivementsPage: FC = () => {
         };
         return new_el;
       });
+      if (filterValue) new_data = filterData(new_data, filterValue);
       setDataSourse(new_data);
     });
   };
@@ -192,6 +194,15 @@ const AllAchivementsPage: FC = () => {
     getRatings();
   }, []);
 
+  interface DataType {
+    name: string;
+    date: Date;
+    diplom: any;
+    place: any;
+    id_rating: any;
+    students: any;
+    workers: any;
+  }
   const columns = [
     {
       title: "Мероприятие",
@@ -206,6 +217,8 @@ const AllAchivementsPage: FC = () => {
       key: "date",
       width: "10%",
       editable: true,
+      sorter: (a: { date: Date }, b: { date: Date }) =>
+        a.date > b.date ? 1 : -1,
     },
     {
       title: "Диплом",

@@ -90,7 +90,12 @@ const GroupInfoPage: FC = () => {
   return (
     <ContainerWithSider>
       <Card title={`${group.name} / Список учеников`}>
-        <Table dataSource={dataSource} columns={columns} loading={isLoading} />
+        <Table
+          scroll={{ x: 900 }}
+          dataSource={dataSource}
+          columns={columns}
+          loading={isLoading}
+        />
       </Card>
     </ContainerWithSider>
   );
