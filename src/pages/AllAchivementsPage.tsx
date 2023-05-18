@@ -13,7 +13,11 @@ import {
   Space,
   Upload,
   Image,
+  UploadFile,
+  UploadProps,
 } from "antd";
+
+import { UploadOutlined } from "@ant-design/icons";
 import { Content } from "antd/es/layout/layout";
 import React, { FC, useEffect, useState } from "react";
 import { AchievementService } from "../api/AchievementsService";
@@ -35,6 +39,7 @@ const AllAchivementsPage: FC = () => {
   const [title, setTitle] = useState("");
   const [dataSource, setDataSourse] = useState<IAchievementForTable[]>([]);
   const location = useLocation();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [teacherOptions, setTeacherOptions] = useState<
     { value: string; label: string }[]
@@ -51,7 +56,9 @@ const AllAchivementsPage: FC = () => {
 
   const [messageApi, contextHolder] = message.useMessage();
 
-  const [image, setImage] = useState({});
+  // const [image, setImage] = useState({});
+
+  const [file, setFile] = useState<UploadFile[]>([]);
 
   const success = () => {
     messageApi.open({
@@ -73,11 +80,13 @@ const AllAchivementsPage: FC = () => {
     setIsModalVisible(true);
   };
   const onCreateReset = () => {
+    setFile([] as UploadFile[]);
     form.resetFields();
   };
 
   const onCancelCreate = () => {
     //form.resetFields()
+    setFile([] as UploadFile[]);
     setIsModalVisible(false);
   };
 
@@ -91,21 +100,23 @@ const AllAchivementsPage: FC = () => {
     formData.append("id_rating", values.id_rating);
     formData.append("workers", values.workers);
     formData.append("students", values.students);
-    formData.append("image", image);
+    formData.append("image", file[0]);
 
-    const data = { ...values, image: image };
+    // const data = { ...values, image: image };
     //values = { ...values, image: values.image.file };
-    console.log(data);
-    await AchievementService.createAchivement(formData, values).then(
-      (isSuccess) => {
+    // console.log(data);
+    setIsLoading(true);
+    await AchievementService.createAchivement(formData, values)
+      .then((isSuccess) => {
         if (isSuccess) {
           success();
+          setFile([] as UploadFile[]);
           form.resetFields();
           setIsModalVisible(false);
           getData();
         } else error();
-      }
-    );
+      })
+      .finally(() => setIsLoading(false));
   };
 
   const getData = async (filterValue?: string) => {
@@ -328,6 +339,27 @@ const AllAchivementsPage: FC = () => {
     }
   };
 
+  const uploadprops: UploadProps = {
+    onRemove: (file) => {
+      setFile([] as UploadFile[]);
+    },
+    beforeUpload: (file) => {
+      console.log(file.type);
+      const isJPG = file.type === "image/jpeg" || file.type === "image/jpg";
+      if (isJPG) {
+        setFile([file]);
+      } else {
+        messageApi.open({
+          type: "error",
+          content: "Загрузите файл в формате JPG",
+        });
+      }
+      return false;
+    },
+
+    fileList: file,
+  };
+
   return (
     <>
       {contextHolder}
@@ -372,7 +404,7 @@ const AllAchivementsPage: FC = () => {
               name="date"
               rules={[{ required: true, message: "Заполните поле" }]}
             >
-              <DatePicker />
+              <DatePicker format={"DD.MM.YYYY"} />
             </Form.Item>
 
             <Form.Item
@@ -380,13 +412,18 @@ const AllAchivementsPage: FC = () => {
               label="Диплом"
               rules={[{ required: true, message: "Заполните поле" }]}
             >
-              <input
+              <Upload {...uploadprops}>
+                <Button icon={<UploadOutlined />}>Выберите файл</Button>
+              </Upload>
+              {/* <input type="file" /> */}
+              {/* <input
                 type="file"
-                onChange={(e) => {
-                  if (!e.target.files) return;
-                  setImage(e.target.files[0]);
-                }}
-              ></input>
+                // onChange={(e) => {
+                //   console.log(e.target.files);
+                //   // if (!e.target.files) return;
+                //   // setImage(e.target.files[0]);
+                // }}
+              /> */}
             </Form.Item>
 
             <Form.Item
@@ -431,7 +468,7 @@ const AllAchivementsPage: FC = () => {
 
             <Space>
               <Form.Item>
-                <Button htmlType="submit" type="primary">
+                <Button loading={isLoading} htmlType="submit" type="primary">
                   Добавить
                 </Button>
               </Form.Item>

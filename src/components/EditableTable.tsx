@@ -101,7 +101,7 @@ const EditableTable = (props: Props) => {
             rules={[
               {
                 required: true,
-                message: `Please Input ${title}!`,
+                message: `Заполните поле`,
               },
             ]}
           >
@@ -235,7 +235,7 @@ const EditableTable = (props: Props) => {
       <Search
         placeholder="Введите текст для поиска"
         onSearch={onSearch}
-        style={{ width: 500, marginBottom: 20 }}
+        style={{ maxWidth: 500, marginBottom: 20 }}
         enterButton
       />
       <Form form={form} component={false}>

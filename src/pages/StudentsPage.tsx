@@ -258,7 +258,7 @@ const StudentsPage: FC = () => {
               name="b_date"
               rules={[{ required: true, message: "Заполните поле" }]}
             >
-              <DatePicker />
+              <DatePicker format={"DD.MM.YYYY"} />
             </Form.Item>
 
             <Form.Item
